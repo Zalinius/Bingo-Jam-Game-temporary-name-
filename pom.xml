@@ -24,7 +24,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.zalinius.temp.Temp</mainClass> <!-- TODO add mainclass location -->
+							<mainClass>com.zalinius.bingojam.BingoJamGame</mainClass> <!-- TODO add mainclass location -->
 						</manifest>
 					</archive>
 				</configuration>
