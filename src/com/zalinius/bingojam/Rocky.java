@@ -40,7 +40,6 @@ public class Rocky implements GameObject, Locatable{
 		//Update orientation
 		if(center.velocity().length() != 0) {
 			Vector3 rotationAxis = Quaternion.rotateAroundAxis(Vector3.OUT, Math.PI/2, new Vector3(center.velocity()) );
-			System.out.println("velocity: " + center.velocity());
 			double deltaRotation = (delta*center.velocity().length()) / radius;
 			orientation = Quaternion.rotateAroundAxis(rotationAxis, deltaRotation, orientation);
 			orientation = orientation.normalize();

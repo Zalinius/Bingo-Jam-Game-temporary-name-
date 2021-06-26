@@ -37,11 +37,6 @@ public class Quaternion {
 	}
 	
 	public static Vector3 rotateAroundAxis(Vector3 rotationAxis, double radians, Vector3 rotatee) {
-		System.out.println(rotationAxis);
-		System.out.println(radians);
-		System.out.println(rotatee);
-		System.out.println();
-		
 		return buildQuaternion(rotationAxis, radians).rotate(rotatee);		
 	}
 }
