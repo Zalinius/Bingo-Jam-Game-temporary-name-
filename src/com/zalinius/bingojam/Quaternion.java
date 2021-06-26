@@ -15,6 +15,9 @@ public class Quaternion {
 	}
 	
 	public static Quaternion buildQuaternion(Vector3 rotationAxis, double radians) {
+		if(rotationAxis.length() == 0) {
+			throw new ArithmeticException("can't rotate around 0-vector");
+		}
 		rotationAxis = rotationAxis.normalize();
 		double cos = Math.cos(radians / 2);
 		double sin = Math.sin(radians / 2);
@@ -31,5 +34,14 @@ public class Quaternion {
 		double zP = (a*a - b*b - c*c + d*d)*z + (-2*a*c + 2*b*d)*x + ( 2*a*b + 2*c*d)*y;
 		
 		return new Vector3(xP, yP, zP);
+	}
+	
+	public static Vector3 rotateAroundAxis(Vector3 rotationAxis, double radians, Vector3 rotatee) {
+		System.out.println(rotationAxis);
+		System.out.println(radians);
+		System.out.println(rotatee);
+		System.out.println();
+		
+		return buildQuaternion(rotationAxis, radians).rotate(rotatee);		
 	}
 }

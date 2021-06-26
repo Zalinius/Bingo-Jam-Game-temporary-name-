@@ -4,6 +4,9 @@ import com.zalinius.zje.physics.Vector;
 
 public class Vector3 {
 
+	public static final Vector3 OUT = new Vector3(0, 0, 1);
+	
+	
 	public final double x;
 	public final double y;
 	public final double z;
@@ -16,6 +19,10 @@ public class Vector3 {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+	
+	public Vector3(Vector xyVector) {
+		this(xyVector.x, xyVector.y, 0);
 	}
 
 	public double length() {
@@ -75,5 +82,7 @@ public class Vector3 {
 		return "<" + x + ", " + y + ", " + z + ">";
 	}
 
+	
+	
 
 }
