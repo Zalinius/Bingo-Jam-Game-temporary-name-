@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class QuaternionTests {
+public class QuaternionTest {
 	public final double ERROR_MARGIN = 1E-12;
 	
 	@ParameterizedTest
