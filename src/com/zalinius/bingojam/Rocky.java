@@ -11,7 +11,6 @@ import java.util.List;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Locatable;
-import com.zalinius.zje.physics.Physical;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.physics.Vector;
 import com.zalinius.zje.physics.Vertex;

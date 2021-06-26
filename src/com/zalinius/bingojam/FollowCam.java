@@ -8,7 +8,7 @@ import com.zalinius.zje.physics.Locatable;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.plugins.RuntimePlugin;
 
-public class FollowCam extends RuntimePlugin{
+public class FollowCam extends RuntimePlugin implements Locatable{
 	
 	private Point center;
 	
@@ -33,5 +33,11 @@ public class FollowCam extends RuntimePlugin{
 		AffineTransform trans = new AffineTransform(1, 0, 0, 1, -cameraPosition.x, - cameraPosition.y);
 		g.setTransform(trans);
 
+	}
+
+
+	@Override
+	public Point position() {
+		return center;
 	}
 }
