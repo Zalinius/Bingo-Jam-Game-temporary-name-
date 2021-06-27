@@ -12,36 +12,39 @@ import java.util.List;
 
 import com.zalinius.bingojam.physics.Quaternion;
 import com.zalinius.bingojam.physics.Vector3;
-import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Locatable;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.physics.Vector;
 import com.zalinius.zje.physics.Vertex;
 
-public class Rocky implements GameObject, Locatable{
+public class Rocky implements Locatable{
 
 	private Vertex center;
 	private Quaternion orientation;
 	private double radius;
+	private double speed;
+	private double friction;
 
 	public Rocky() {
 		this.center = new Vertex(new Point(), 5);
 		this.radius = 50;
 		this.orientation = new Quaternion();
 		this.directionOfInput = new Vector();
+		this.speed = 500;
+		this.friction = 1;
 	}
 
-	@Override
-	public void update(double delta) {
+	public void update(double delta, List<Vector> forcesOnRocky) {
 		Vector pushing = directionOfInput;
 		if(!pushing.isZeroVector()) {
-			pushing = pushing.normalize().scale(500);
+			pushing = pushing.normalize().scale(speed);
 		}
-		Vector friction = center.velocity().scale(-1);
-		Vector sumOfForces = pushing.add(friction);
+		Vector frictionForce = center.velocity().scale(-friction);
+		Vector sumOfForces = pushing.add(frictionForce);
 
-		center.update(sumOfForces, delta);
+		forcesOnRocky.add(sumOfForces);
+		center.update(forcesOnRocky, delta);
 
 		//Update orientation
 		if(center.velocity().length() != 0) {
@@ -53,7 +56,6 @@ public class Rocky implements GameObject, Locatable{
 		}
 	}
 
-	@Override
 	public void render(Graphics2D g) {
 		g.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		for (Iterator<Vector3> it = smileyFace().iterator(); it.hasNext();) {
@@ -134,6 +136,14 @@ public class Rocky implements GameObject, Locatable{
 	public Vertex physicality() {
 		return center;
 	}
+	
+	public double radius() {
+		return radius;
+	}
 
+	public void disable() {
+		speed = 0;
+		friction = 10;
+	}
 
 }

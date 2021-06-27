@@ -25,14 +25,18 @@ public class World implements GameObject {
 	
 	private LetterTile tile;
 
+	private Pitfall pitfall;
+	
 	public World() {
 		rocky = new Rocky();
 		wall = new Wall(new Point(200, 200), new Point(300, 200));
 		tile = new LetterTile('A', new Point(-200, 200));
+		pitfall = new Pitfall(new Point(-250, -250), 200, 200);
 	}
 	
 	@Override
 	public void update(double delta) {
+		List<Vector> forcesOnRocky = new ArrayList<>();
 
 		double ScalarForce = Magnet.forceBetweenMagnets(m1, m2);
 		Vector forceOnM1 = new Vector(m1.position(), m2.position()).scale(ScalarForce);
@@ -50,9 +54,21 @@ public class World implements GameObject {
 		}
 		
 
+		if(pitfall.shape().contains(rocky.position().point2D())) {
+			Vector pitfallForce = new Vector(rocky.position(), pitfall.position());
+			if(!pitfallForce.isZeroVector()) {
+				if(pitfall.innerShape(rocky.radius()).contains(rocky.position().point2D())) {
+					rocky.disable();
+				}
+				else {
+					pitfallForce = pitfallForce.normalize().scale(500);
+					forcesOnRocky.add(pitfallForce);
+				}
+				
+			}
+		}
 
-
-		rocky.update(delta);		
+		rocky.update(delta, forcesOnRocky);		
 		if(Collisions.intersection(rocky.rockyShape(), wall.line())) {
 			Vector velocity = rocky.physicality().velocity();
 			Vector reflector = new Vector(wall.line());
@@ -76,9 +92,10 @@ public class World implements GameObject {
 	public void render(Graphics2D g) {
 		m1.render(g);
 		m2.render(g);
-		rocky.render(g);
 		wall.render(g);
 		tile.render(g);
+		pitfall.render(g);
+		rocky.render(g);
 	}
 	
 
