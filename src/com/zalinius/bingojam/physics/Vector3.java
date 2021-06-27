@@ -1,4 +1,4 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.physics;
 
 import com.zalinius.zje.physics.Vector;
 

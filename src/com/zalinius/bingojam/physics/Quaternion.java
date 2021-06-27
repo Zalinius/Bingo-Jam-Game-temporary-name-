@@ -1,4 +1,4 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.physics;
 
 public class Quaternion {
 	private final double a, b, c, d;

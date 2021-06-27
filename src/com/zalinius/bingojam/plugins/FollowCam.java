@@ -1,4 +1,4 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.plugins;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
