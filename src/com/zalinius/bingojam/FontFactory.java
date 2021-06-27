@@ -19,7 +19,16 @@ public class FontFactory {
 		return Font.createFont(Font.TRUETYPE_FONT, new File("res/ldfcomicsans-font/Ldfcomicsans-jj7l.ttf"));
 	}
 
+	private static Font font;
+	
 	public static Font getFont() {
+		if(font == null) {
+			font = findPrioritizedFont();
+		}
+		return font;
+	}
+	
+	private static Font findPrioritizedFont() {
 		for (Iterator<String> it = fontFamilyPriorityOrder().iterator(); it.hasNext();) {
 			String fontFamilyName = it.next();
 			if(availableFontFamilies().contains(fontFamilyName)) {

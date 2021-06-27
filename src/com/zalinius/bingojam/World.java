@@ -22,10 +22,13 @@ public class World implements GameObject {
 
 	private Magnet m1 = new Magnet(new Point(100, -100), UnitVector.up(), 1000);
 	private Magnet m2 = new Magnet(new Point(100, -150), UnitVector.down(), 1000);
+	
+	private LetterTile tile;
 
 	public World() {
 		rocky = new Rocky();
 		wall = new Wall(new Point(200, 200), new Point(300, 200));
+		tile = new LetterTile('A', new Point(-200, 200));
 	}
 	
 	@Override
@@ -63,6 +66,10 @@ public class World implements GameObject {
 				rocky.physicality().impulse(reflection);
 			}
 		}
+		
+		if(tile.shape().contains(rocky.position().point2D())) {
+			tile.press();
+		}
 	}
 
 	@Override
@@ -71,6 +78,7 @@ public class World implements GameObject {
 		m2.render(g);
 		rocky.render(g);
 		wall.render(g);
+		tile.render(g);
 	}
 	
 
