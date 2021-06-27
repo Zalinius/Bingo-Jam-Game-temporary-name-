@@ -13,7 +13,9 @@ import com.zalinius.zje.architecture.GameContainer;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Locatable;
+import com.zalinius.zje.physics.Physical;
 import com.zalinius.zje.physics.Point;
+import com.zalinius.zje.physics.UnitVector;
 import com.zalinius.zje.physics.Vector;
 import com.zalinius.zje.plugins.AbstractPlugin;
 import com.zalinius.zje.plugins.BackgroundColor;
@@ -27,6 +29,9 @@ public class BingoJamGame extends GameContainer{
 
 	private Rocky rocky;
 	private Wall wall;
+
+	private Magnet m1 = new Magnet(new Point(100, -100), UnitVector.up(), 1000);
+	private Magnet m2 = new Magnet(new Point(100, -150), UnitVector.down(), 1000);
 
 	public BingoJamGame() {
 		super("Bingo jam game (temp name)", 1000, 1000);
@@ -78,12 +83,44 @@ public class BingoJamGame extends GameContainer{
 
 	@Override
 	public void render(Graphics2D g) {
+		m1.render(g);
+		m2.render(g);
 		rocky.render(g);
 		wall.render(g);
 	}
 
+	public Vector dynamicFriction(Physical object, double coefficient) {
+		if(object.velocity().isZeroVector()) {
+			return new Vector();
+		}
+		return object.velocity().normalize().reflect().scale(coefficient).scale(object.mass());
+	}
+
+	public double staticFrictionThreshold(Physical object, double staticCoefficient) {
+		return object.mass() * staticCoefficient;
+	}
+
 	@Override
 	public void update(double delta) {
+
+		double ScalarForce = Magnet.forceBetweenMagnets(m1, m2);
+		Vector forceOnM1 = new Vector(m1.position(), m2.position()).scale(ScalarForce);
+		forceOnM1 = forceOnM1.add(dynamicFriction(m1, 100));
+		m1.update(forceOnM1, delta);
+
+		Vector forceOnM2 = new Vector(m2.position(), m1.position()).scale(ScalarForce);
+		forceOnM2 = forceOnM2.add(dynamicFriction(m2, 100));
+
+		if(forceOnM2.length() > staticFrictionThreshold(m2, 150) || m2.velocity().length() > 1) {
+			m2.update(forceOnM2, delta);
+		}
+		else {
+			m2.update(m2.velocity().scale(-1 * m2.mass()), delta);
+		}
+		
+
+
+
 		rocky.update(delta);		
 		if(Collisions.intersection(rocky.rockyShape(), wall.line())) {
 			Vector velocity = rocky.physicality().velocity();
@@ -116,7 +153,7 @@ public class BingoJamGame extends GameContainer{
 				g.drawLine(0, -5000, 0, 5000);
 				g.setColor(Color.WHITE);
 				g.drawLine(0, 0, 0, 0);
-				
+
 				g.setStroke(new BasicStroke(1));
 				for (int i = -700; i <= 700; i+= 100) {
 					g.setColor(new Color(0,  0,  1f,  0.5f));
@@ -126,7 +163,7 @@ public class BingoJamGame extends GameContainer{
 					Line2D.Double lineY = new Line2D.Double(xOffset  + i, yOffset - 700, xOffset + i, yOffset + 700);
 					g.draw(lineY);
 				}
-				
+
 			}
 		};
 	}

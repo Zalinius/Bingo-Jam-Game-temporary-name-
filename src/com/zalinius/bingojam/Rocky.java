@@ -32,7 +32,10 @@ public class Rocky implements GameObject, Locatable{
 
 	@Override
 	public void update(double delta) {
-		Vector pushing = directionOfInput.scale(500);
+		Vector pushing = directionOfInput;
+		if(!pushing.isZeroVector()) {
+			pushing = pushing.normalize().scale(500);
+		}
 		Vector friction = center.velocity().scale(-1);
 		Vector sumOfForces = pushing.add(friction);
 
