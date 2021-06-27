@@ -86,7 +86,6 @@ public class BingoJamGame extends GameContainer{
 	public void update(double delta) {
 		rocky.update(delta);		
 		if(Collisions.intersection(rocky.rockyShape(), wall.line())) {
-			System.out.println("Wapow");
 			Vector velocity = rocky.physicality().velocity();
 			Vector reflector = new Vector(wall.line());
 			double bouncyness = 1.0;

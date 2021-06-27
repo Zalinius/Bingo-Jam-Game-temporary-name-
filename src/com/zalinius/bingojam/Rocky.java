@@ -19,13 +19,13 @@ import com.zalinius.zje.physics.Vertex;
 public class Rocky implements GameObject, Locatable{
 
 	private Vertex center;
-	private Vector3 orientation;
+	private Quaternion orientation;
 	private double radius;
 
 	public Rocky() {
 		this.center = new Vertex(new Point(), 5);
 		this.radius = 50;
-		this.orientation = new Vector3(0, 0, 1);
+		this.orientation = new Quaternion();
 		this.directionOfInput = new Vector();
 	}
 
@@ -41,19 +41,22 @@ public class Rocky implements GameObject, Locatable{
 		if(center.velocity().length() != 0) {
 			Vector3 rotationAxis = Quaternion.rotateAroundAxis(Vector3.OUT, Math.PI/2, new Vector3(center.velocity()) );
 			double deltaRotation = (delta*center.velocity().length()) / radius;
-			orientation = Quaternion.rotateAroundAxis(rotationAxis, deltaRotation, orientation);
+			Quaternion deltaOrientation = Quaternion.buildQuaternion(rotationAxis, deltaRotation);
+			orientation = orientation.multiply(deltaOrientation);
 			orientation = orientation.normalize();
 		}
 	}
 
 	@Override
 	public void render(Graphics2D g) {
+		Vector3 dot = new Vector3(0, 0, radius);
+		dot = orientation.rotate(dot);
 		g.setStroke(new BasicStroke(5));
 		g.setColor(Color.GREEN);
-		if(orientation.z <= 0) {
+		if(dot.z <= 0) {
 			g.setColor(Color.GREEN.darker().darker());
 		}
-		Vector projection = orientation.scale(radius).project();
+		Vector projection = dot.project();
 		Point spot = center.position().add(projection);
 		g.draw(new Line2D.Double(spot.point2D(), spot.point2D()));
 
