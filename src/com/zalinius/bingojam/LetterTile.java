@@ -65,7 +65,7 @@ public class LetterTile implements GameObject, Collideable{
 		FontMetrics metrics = g.getFontMetrics(font);
 		
 	    double xLetter = center.x - metrics.stringWidth(letter) / 2  ;
-	    double yLetter = center.y + metrics.getAscent()/3;
+	    double yLetter = center.y - metrics.getHeight()/2 + metrics.getAscent();
 	    
 		g.drawString(letter,(float) xLetter,(float) yLetter);
 
