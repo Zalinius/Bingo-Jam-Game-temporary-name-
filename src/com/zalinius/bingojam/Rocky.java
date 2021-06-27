@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.zalinius.zje.architecture.GameObject;
@@ -49,16 +50,19 @@ public class Rocky implements GameObject, Locatable{
 
 	@Override
 	public void render(Graphics2D g) {
-		Vector3 dot = new Vector3(0, 0, radius);
-		dot = orientation.rotate(dot);
-		g.setStroke(new BasicStroke(5));
-		g.setColor(Color.GREEN);
-		if(dot.z <= 0) {
-			g.setColor(Color.GREEN.darker().darker());
+		g.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		for (Iterator<Vector3> it = smileyFace().iterator(); it.hasNext();) {
+			Vector3 point = it.next();
+			point = orientation.rotate(point);
+			if(point.z <= 0) {
+				g.setColor(Color.GREEN.darker().darker());
+			}else {
+				g.setColor(Color.GREEN);
+			}
+			Vector projection = point.project();
+			Point spot = center.position().add(projection);
+			g.draw(new Line2D.Double(spot.point2D(), spot.point2D()));
 		}
-		Vector projection = dot.project();
-		Point spot = center.position().add(projection);
-		g.draw(new Line2D.Double(spot.point2D(), spot.point2D()));
 
 		g.setColor(Color.WHITE);
 		g.setStroke(new BasicStroke(5));
@@ -80,6 +84,22 @@ public class Rocky implements GameObject, Locatable{
 
 		return inputs;
 	}
+
+	private List<Vector3> smileyFace(){
+		List<Vector3> points = new ArrayList<>();
+
+		points.add(new Vector3(1, -1, 2).normalize().scale(radius));
+		points.add(new Vector3(-1, -1, 2).normalize().scale(radius));
+	
+		points.add(new Vector3(-1, 1, 2).normalize().scale(radius));
+		points.add(new Vector3(-0.5, 1.25, 2).normalize().scale(radius));
+		points.add(new Vector3( 0, 1.35, 2).normalize().scale(radius));
+		points.add(new Vector3(0.5, 1.25, 2).normalize().scale(radius));
+		points.add(new Vector3( 1, 1, 2).normalize().scale(radius));
+		
+		return points;
+	}
+
 	private Vector directionOfInput;
 	public Inputtable directionInput(int key, Vector direction) {
 		return new Inputtable() {
