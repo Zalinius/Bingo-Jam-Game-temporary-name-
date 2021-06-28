@@ -11,9 +11,11 @@ import com.zalinius.zje.plugins.RuntimePlugin;
 public class Axes extends RuntimePlugin {
 	
 	private final Locatable visibleCenter;
+	private final int gridWidth;
 	
 	public Axes(Locatable visibleCenter) {
 		this.visibleCenter = visibleCenter;
+		this.gridWidth = 100;
 	}
 	
 	
@@ -33,7 +35,7 @@ public class Axes extends RuntimePlugin {
 		g.drawLine(0, 0, 0, 0);
 
 		g.setStroke(new BasicStroke(1));
-		for (int i = -700; i <= 700; i+= 100) {
+		for (int i = -7*gridWidth; i <= 7*gridWidth; i+= gridWidth) {
 			g.setColor(new Color(0,  0,  1f,  0.5f));
 			Line2D.Double lineX = new Line2D.Double(xOffset - 700, yOffset + i, xOffset + 700, yOffset + i);
 			g.draw(lineX);

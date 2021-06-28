@@ -1,7 +1,6 @@
 package com.zalinius.bingojam;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
@@ -12,6 +11,7 @@ import java.util.List;
 
 import com.zalinius.bingojam.physics.Quaternion;
 import com.zalinius.bingojam.physics.Vector3;
+import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Locatable;
 import com.zalinius.zje.physics.Point;
@@ -65,16 +65,16 @@ public class Rocky implements Locatable{
 			Vector3 point = it.next();
 			point = orientation.rotate(point);
 			if(point.z <= 0) {
-				g.setColor(Color.GREEN.darker().darker());
+				g.setColor(Palette.FACE_SHADED);
 			}else {
-				g.setColor(Color.GREEN);
+				g.setColor(Palette.FACE);
 			}
 			Vector projection = point.project();
 			Point spot = center.position().add(projection);
 			g.draw(new Line2D.Double(spot.point2D(), spot.point2D()));
 		}
 
-		g.setColor(Color.WHITE);
+		g.setColor(Palette.BRIGHT);
 		g.setStroke(new BasicStroke(5));
 		g.draw(rockyShape());
 	}

@@ -1,4 +1,4 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.resources;
 
 import java.awt.Font;
 import java.awt.FontFormatException;

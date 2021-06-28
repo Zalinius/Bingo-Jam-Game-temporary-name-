@@ -1,6 +1,5 @@
 package com.zalinius.bingojam;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +8,7 @@ import com.zalinius.bingojam.levels.AbstractWorld;
 import com.zalinius.bingojam.levels.DemoLand;
 import com.zalinius.bingojam.plugins.Axes;
 import com.zalinius.bingojam.plugins.FollowCam;
+import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.architecture.GameContainer;
 import com.zalinius.zje.plugins.AbstractPlugin;
 import com.zalinius.zje.plugins.BackgroundColor;
@@ -31,7 +31,7 @@ public class BingoJamGame extends GameContainer{
 	@Override
 	public List<AbstractPlugin> getPlugins() {
 		List<AbstractPlugin> plugins = new ArrayList<>();
-		plugins.add(new BackgroundColor(Color.DARK_GRAY.darker().darker()));
+		plugins.add(new BackgroundColor(Palette.GROUND));
 		FollowCam cam = this.gameWorld.getFollowCamera();
 		plugins.add(cam);
 		plugins.add(new Axes(cam));

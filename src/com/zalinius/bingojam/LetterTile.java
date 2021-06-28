@@ -1,12 +1,13 @@
 package com.zalinius.bingojam;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 
+import com.zalinius.bingojam.resources.FontFactory;
+import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.physics.Collideable;
 import com.zalinius.zje.physics.Point;
@@ -34,12 +35,12 @@ public class LetterTile implements GameObject, Collideable{
 	@Override
 	public void render(Graphics2D g) {
 		g.setStroke(new BasicStroke(5, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-		g.setColor(Color.WHITE);
+		g.setColor(Palette.BRIGHT);
 		g.setFont(prepareFont());
 
 		if(pressed) {
 			g.fill(shape());
-			g.setColor(Color.BLACK);
+			g.setColor(Palette.GROUND);
 			drawLetter(g);
 		}
 		else {

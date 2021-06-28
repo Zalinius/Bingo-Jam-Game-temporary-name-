@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
+import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.physics.Collideable;
 import com.zalinius.zje.physics.Locatable;
 import com.zalinius.zje.physics.Point;
@@ -21,8 +22,8 @@ public class Pitfall implements Collideable, Locatable{
 	}
 
 	public void render(Graphics2D g) {
-		Color pitColor = Color.BLACK;
-		Color outlineColor = Color.DARK_GRAY;
+		Color pitColor = Palette.DEATH;
+		Color outlineColor = Palette.STONE;
 		
 		g.setColor(pitColor);
 		g.fill(shape());
