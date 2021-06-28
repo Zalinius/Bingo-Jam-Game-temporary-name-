@@ -22,23 +22,26 @@ public class Rocky implements Locatable{
 
 	private Vertex center;
 	private Quaternion orientation;
+	
 	private double radius;
-	private double speed;
+	private double acceleration;
 	private double friction;
+	private Point respawnPoint;
 
 	public Rocky() {
 		this.center = new Vertex(new Point(), 5);
+		this.respawnPoint = center.position();
 		this.radius = 50;
 		this.orientation = new Quaternion();
 		this.directionOfInput = new Vector();
-		this.speed = 500;
+		this.acceleration = 500;
 		this.friction = 1;
 	}
 
 	public void update(double delta, List<Vector> forcesOnRocky) {
 		Vector pushing = directionOfInput;
 		if(!pushing.isZeroVector()) {
-			pushing = pushing.normalize().scale(speed);
+			pushing = pushing.normalize().scale(acceleration);
 		}
 		Vector frictionForce = center.velocity().scale(-friction);
 		Vector sumOfForces = pushing.add(frictionForce);
@@ -142,8 +145,18 @@ public class Rocky implements Locatable{
 	}
 
 	public void disable() {
-		speed = 0;
+		acceleration = 0;
 		friction = 10;
+	}
+	public void enable() {
+		acceleration = 500;
+		friction = 1;
+	}
+	
+	public void respawn() {
+		center = new Vertex(respawnPoint, 5);
+		orientation = new Quaternion();
+		enable();
 	}
 
 }

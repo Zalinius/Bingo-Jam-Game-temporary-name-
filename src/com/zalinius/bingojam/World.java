@@ -59,6 +59,7 @@ public class World implements GameObject {
 			if(!pitfallForce.isZeroVector()) {
 				if(pitfall.innerShape(rocky.radius()).contains(rocky.position().point2D())) {
 					rocky.disable();
+					rocky.respawn();
 				}
 				else {
 					pitfallForce = pitfallForce.normalize().scale(500);
