@@ -1,4 +1,4 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.levels;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -6,16 +6,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.zalinius.bingojam.BingoJamGame;
+import com.zalinius.bingojam.LetterTile;
+import com.zalinius.bingojam.Magnet;
+import com.zalinius.bingojam.Pitfall;
+import com.zalinius.bingojam.Rocky;
+import com.zalinius.bingojam.Wall;
 import com.zalinius.bingojam.physics.Friction;
 import com.zalinius.bingojam.plugins.FollowCam;
-import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.physics.UnitVector;
 import com.zalinius.zje.physics.Vector;
 
-public class World implements GameObject {
+public class DemoLand extends AbstractWorld {
 
 	private Rocky rocky;
 	private Wall wall;
@@ -27,7 +32,7 @@ public class World implements GameObject {
 
 	private Pitfall pitfall;
 	
-	public World() {
+	public DemoLand() {
 		rocky = new Rocky();
 		wall = new Wall(new Point(200, 200), new Point(300, 200));
 		tile = new LetterTile('A', new Point(-200, 200));
@@ -99,8 +104,7 @@ public class World implements GameObject {
 		rocky.render(g);
 	}
 	
-
-
+	@Override
 	public Collection<Inputtable> getKeyboardControls(BingoJamGame game) {
 		List<Inputtable> inputs = new ArrayList<>();
 		inputs.add(new Inputtable() {
@@ -124,6 +128,7 @@ public class World implements GameObject {
 		return inputs;
 	}
 
+	@Override
 	public FollowCam getFollowCamera() {
 		return new FollowCam(rocky);
 	}

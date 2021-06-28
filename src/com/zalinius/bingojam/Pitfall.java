@@ -5,12 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
-import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.physics.Collideable;
 import com.zalinius.zje.physics.Locatable;
 import com.zalinius.zje.physics.Point;
 
-public class Pitfall implements GameObject, Collideable, Locatable{
+public class Pitfall implements Collideable, Locatable{
 	
 	private Point center;
 	private double width, height;
@@ -21,11 +20,6 @@ public class Pitfall implements GameObject, Collideable, Locatable{
 		this.height = height;
 	}
 
-	@Override
-	public void update(double delta) {
-	}
-
-	@Override
 	public void render(Graphics2D g) {
 		Color pitColor = Color.BLACK;
 		Color outlineColor = Color.DARK_GRAY;
