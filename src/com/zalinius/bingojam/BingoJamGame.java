@@ -8,6 +8,7 @@ import com.zalinius.bingojam.levels.AbstractWorld;
 import com.zalinius.bingojam.levels.DemoLand;
 import com.zalinius.bingojam.plugins.Axes;
 import com.zalinius.bingojam.plugins.FollowCam;
+import com.zalinius.bingojam.resources.FontFactory;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.architecture.GameContainer;
 import com.zalinius.zje.plugins.AbstractPlugin;
@@ -25,6 +26,7 @@ public class BingoJamGame extends GameContainer{
 		super("Bingo jam game (temp name)", 1000, 1000);
 		this.gameWorld = new DemoLand();
 		addControls(this.gameWorld.getKeyboardControls(this), null);
+		prepareResources();
 	}
 
 
@@ -52,6 +54,10 @@ public class BingoJamGame extends GameContainer{
 	@Override
 	public void shutdownActions() {
 		System.out.println("Goodbye Bingo");		
+	}
+	
+	private void prepareResources() {
+		FontFactory.getFont();
 	}
 
 }
