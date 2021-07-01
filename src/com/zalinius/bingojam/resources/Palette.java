@@ -11,4 +11,9 @@ public class Palette {
 	public static final Color FACE_SHADED = FACE.darker().darker();
 	public static final Color STONE = Color.DARK_GRAY;
 	public static final Color GROUND = Color.DARK_GRAY.darker().darker();
+	public static final Color BOUNCE = Color.ORANGE;
+	public static final Color DOOR = new Color(.5f, .5f, .7f);
+
+
+	public static final Color DEBUG = new Color(1f, 0f, 1f);
 }

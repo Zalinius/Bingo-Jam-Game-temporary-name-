@@ -9,18 +9,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class FontFactory {
+public class FontSingleton {
 	
-	private static List<String> fontFamilyPriorityOrder(){
-		return Arrays.asList("Comic Sans MS");
-	}
-	
-	private static Font defaultFont() throws FontFormatException, IOException {
-		return Font.createFont(Font.TRUETYPE_FONT, new File("res/ldfcomicsans-font/Ldfcomicsans-jj7l.ttf"));
-	}
-
 	private static Font font;
-	
+
 	public static Font getFont() {
 		if(font == null) {
 			font = findPrioritizedFont();
@@ -37,7 +29,7 @@ public class FontFactory {
 		}
 		
 		try {
-			return defaultFont();
+			return packagedFont();
 		} catch (FontFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -49,5 +41,13 @@ public class FontFactory {
 	
 	private static List<String> availableFontFamilies(){
 		return Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+	}
+	
+	private static List<String> fontFamilyPriorityOrder(){
+		return Arrays.asList("Comic Sans MS");
+	}
+	
+	private static Font packagedFont() throws FontFormatException, IOException {
+		return Font.createFont(Font.TRUETYPE_FONT, new File("res/ldfcomicsans-font/Ldfcomicsans-jj7l.ttf"));
 	}
 }
