@@ -45,8 +45,6 @@ public class LetterPuzzle implements GameObject{
 	}
 
 
-
-
 	private interface PuzzleState extends Logical {/**/}
 
 	public final PuzzleState updateState() {
@@ -63,11 +61,11 @@ public class LetterPuzzle implements GameObject{
 
 							if(puzzleActions.containsKey(codeEntry)) {
 								//TODO play a little sound
-								//TODO remove code and action?
 								Runnable actionForCode = puzzleActions.get(codeEntry);
 								actionForCode.run();
+								
 								resetPuzzle();
-
+								puzzleActions.remove(codeEntry);
 								puzzleState = winAnimation();
 							}
 							else if(codeEntry.length() == letterTiles.size()) {

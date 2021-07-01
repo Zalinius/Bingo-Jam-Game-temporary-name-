@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.physics.Quaternion;
 import com.zalinius.bingojam.physics.Topographical;
 import com.zalinius.bingojam.physics.Vector3;
@@ -23,7 +24,6 @@ import com.zalinius.bingojam.physics.forces.in3d.KineticFriction3D;
 import com.zalinius.bingojam.physics.forces.in3d.NetForce3D;
 import com.zalinius.bingojam.physics.forces.in3d.NormalForce3D;
 import com.zalinius.bingojam.physics.forces.in3d.StaticFriction3D;
-import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
@@ -210,8 +210,8 @@ public class Rocky implements GameObject, Locatable{
 	private List<Vector> getLocalWallNormals() {
 		List<Vector> normals = new ArrayList<>();
 		Ellipse2D.Double circle = rockyShape();
-		for (Iterator<Wall> it = worldSurface.getAdjacentWalls(circle).iterator(); it.hasNext();) {
-			Wall wall = it.next();
+		for (Iterator<CollideableLine> it = worldSurface.getAdjacentWalls(circle).iterator(); it.hasNext();) {
+			CollideableLine wall = it.next();
 			Line2D.Double line = wall.line();
 
 			if(Collisions.intersection(circle, line)) {
@@ -241,10 +241,10 @@ public class Rocky implements GameObject, Locatable{
 	private Vector getImpulseFromHittingWalls() {
 		Vector impulse = new Vector();
 		Ellipse2D.Double circle = rockyShape();
-		Iterator<Wall> it = worldSurface.getAdjacentWalls(circle).iterator();
+		Iterator<CollideableLine> it = worldSurface.getAdjacentWalls(circle).iterator();
 
 		while(it.hasNext()) {
-			Wall wall = it.next();
+			CollideableLine wall = it.next();
 			Line2D.Double line = wall.line();
 
 			if(Collisions.intersection(circle, line)) {

@@ -6,12 +6,13 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 
+import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.math.Interpolation;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.physics.Vector;
 
-public class Wall {
+public class Wall implements CollideableLine {
 	private Point p1;
 	private Point p2;
 	

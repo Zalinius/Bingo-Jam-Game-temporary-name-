@@ -13,8 +13,10 @@ import java.util.Map;
 
 import com.zalinius.bingojam.Magnet;
 import com.zalinius.bingojam.Rocky;
+import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.physics.Topographical;
 import com.zalinius.bingojam.physics.Vector3;
+import com.zalinius.bingojam.pieces.Door;
 import com.zalinius.bingojam.pieces.Pitfall;
 import com.zalinius.bingojam.pieces.Ramp;
 import com.zalinius.bingojam.pieces.RespawnPoint;
@@ -34,7 +36,8 @@ public class DemoLand extends AbstractWorld implements Topographical{
 	private Rocky rocky;
 	private Collection<Wall> walls;
 	private Collection<RespawnPoint> respawnPoints;
-
+	private Collection<Door> doors;
+	
 	private Magnet m1 = new Magnet(new Point(100, -100), UnitVector.up(), 1000);
 	private Magnet m2 = new Magnet(new Point(100, -150), UnitVector.down(), 1000);
 
@@ -52,8 +55,11 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		tile = new LetterTile('A', new Point(-200, 200));
 		pitfall = new Pitfall(new Point(-250, -250), 200, 200);
 		ramp = new Ramp(new Point(-500, 300), 400, 200);
-		puzzle = makeLetterPuzzle();
 		respawnPoints = Arrays.asList(buildRespawnPoint(new Point()), buildRespawnPoint(new Point(300, 300)));
+		Door codeDoorOpen = new Door(new Point(-400, -100), new Point(-400, 100));
+		doors = Arrays.asList(codeDoorOpen);
+		puzzle = makeLetterPuzzle(codeDoorOpen);
+
 	}
 	
 	public RespawnPoint buildRespawnPoint(Point respawnPoint) {
@@ -107,6 +113,8 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		ramp.render(g);
 		puzzle.render(g);
 		respawnPoints.forEach(res -> res.render(g));
+		doors.forEach(door -> door.render(g));
+		
 
 		rocky.render(g);
 	}
@@ -140,8 +148,8 @@ public class DemoLand extends AbstractWorld implements Topographical{
 	}
 
 	@Override
-	public List<Wall> getAdjacentWalls(Ellipse2D.Double circle){
-		List<Wall> adjacentWalls = new ArrayList<>();
+	public List<CollideableLine> getAdjacentWalls(Ellipse2D.Double circle){
+		List<CollideableLine> adjacentWalls = new ArrayList<>();
 
 		for (Iterator<Wall> it = walls.iterator(); it.hasNext();) {
 			Wall wall = it.next();
@@ -150,10 +158,17 @@ public class DemoLand extends AbstractWorld implements Topographical{
 			}			
 		}
 
+		for (Iterator<Door> it = doors.iterator(); it.hasNext();) {
+			Door door = it.next();
+			if(Collisions.intersection(circle, door.line()) && !door.isOpen()) {
+				adjacentWalls.add(door);
+			}			
+		}
+
 		return adjacentWalls;
 	}
 	
-	private LetterPuzzle makeLetterPuzzle() {
+	private LetterPuzzle makeLetterPuzzle(Door codeDoorOpen) {
 		List<LetterTile> tiles = new ArrayList<>();
 		tiles.add(new LetterTile('E', new Point(0, -500)));
 		tiles.add(new LetterTile('R', new Point(100, -500)));
@@ -161,9 +176,12 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		tiles.add(new LetterTile('C', new Point(300, -500)));
 		tiles.add(new LetterTile('S', new Point(400, -500)));
 		tiles.add(new LetterTile('O', new Point(500, -500)));
+		tiles.add(new LetterTile('P', new Point(600, -500)));
+		tiles.add(new LetterTile('N', new Point(700, -500)));
 		
 		Map<String, Runnable> actions = new HashMap<>();
 		actions.put("CODE", () -> System.out.println("You did it!"));
+		actions.put("OPEN", () -> codeDoorOpen.open());
 		
 		return new LetterPuzzle(tiles, actions, rocky);
 	}
