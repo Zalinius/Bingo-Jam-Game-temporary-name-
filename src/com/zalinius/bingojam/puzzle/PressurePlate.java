@@ -1,6 +1,5 @@
 package com.zalinius.bingojam.puzzle;
 
-import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 

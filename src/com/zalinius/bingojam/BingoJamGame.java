@@ -9,8 +9,8 @@ import com.zalinius.bingojam.plugins.Axes;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.resources.FontSingleton;
 import com.zalinius.bingojam.resources.Palette;
-import com.zalinius.bingojam.worlds.AbstractWorld;
-import com.zalinius.bingojam.worlds.DemoLand;
+import com.zalinius.bingojam.worlds.World;
+import com.zalinius.bingojam.worlds.WorldFactory;
 import com.zalinius.zje.architecture.GameContainer;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.plugins.AbstractPlugin;
@@ -22,11 +22,11 @@ public class BingoJamGame extends GameContainer{
 		game.startGame();
 	}
 
-	private AbstractWorld gameWorld;
+	private World gameWorld;
 
 	public BingoJamGame() {
 		super("Bingo jam game (temp name)", 1000, 1000);
-		this.gameWorld = new DemoLand();
+		this.gameWorld = WorldFactory.demoLand();
 		addControls(getControls(), null);
 		prepareResources();
 	}

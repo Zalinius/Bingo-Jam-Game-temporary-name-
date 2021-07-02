@@ -1,17 +1,12 @@
 package com.zalinius.bingojam.worlds;
 
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import com.zalinius.bingojam.Magnet;
 import com.zalinius.bingojam.Rocky;
 import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.physics.Kinetic;
@@ -26,15 +21,13 @@ import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
-import com.zalinius.bingojam.puzzle.LetterTile;
 import com.zalinius.bingojam.puzzle.PressurePlate;
-import com.zalinius.bingojam.utilities.Geometry;
+import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Point;
-import com.zalinius.zje.physics.UnitVector;
 
-public class DemoLand extends AbstractWorld implements Topographical{
+public class World implements GameObject, Topographical{
 
 	private Rocky rocky;
 	private Collection<Wall> walls;
@@ -42,56 +35,60 @@ public class DemoLand extends AbstractWorld implements Topographical{
 	private Collection<Door> doors;
 	private Collection<Barrel> barrels;
 	private Collection<PressurePlate> plates;
+	private Collection<Ramp> ramps;
+	private Collection<Pitfall> pitfalls;
+	private Collection<LetterPuzzle> puzzles;
 
-	private Magnet m1 = new Magnet(new Point(100, -100), UnitVector.up(), 1000);
-	private Magnet m2 = new Magnet(new Point(100, -150), UnitVector.down(), 1000);
 
-	private LetterTile tile;
-	private LetterPuzzle puzzle;
-
-	private Pitfall pitfall;
-
-	private Ramp ramp;
-
-	public DemoLand() {
-		rocky = new Rocky(this);
-
-		walls = Arrays.asList(new Wall(new Point(200, 200), new Point(300, 200), 1), new Wall(new Point(350, 200), new Point(450, 200), true));
-		tile = new LetterTile('A', new Point(-200, 200));
-		pitfall = new Pitfall(new Point(-250, -250), 200, 200);
-		ramp = new Ramp(new Point(-500, 300), 400, 200);
-		respawnPoints = Arrays.asList(buildRespawnPoint(new Point()), buildRespawnPoint(new Point(300, 300)));
-		Door codeDoorOpen = new Door(new Point(-400, -100), new Point(-400, 100));
-		doors = Arrays.asList(codeDoorOpen);
-		puzzle = makeLetterPuzzle(codeDoorOpen);
-		barrels = Arrays.asList(new Barrel(new Point(100, 100), 25, this), new Barrel(new Point(425, -150), 25, this), new Barrel(new Point(500, -150), 25, this));
-		plates = Arrays.asList(new PressurePlate(new Point(450, -250), 75));
+	public void setRocky(Rocky rocky) {
+		this.rocky = rocky;
 	}
 
-	public RespawnPoint buildRespawnPoint(Point respawnPoint) {
-		Runnable setRespawn = () -> rocky.setRespawn(respawnPoint);
-		Shape respawnTrigger = Geometry.centeredSquare(respawnPoint, 100);
-		return new RespawnPoint(respawnTrigger, rocky, setRespawn);
+	public void setWalls(Collection<Wall> walls) {
+		this.walls = walls;
 	}
 
+	public void setRespawnPoints(Collection<RespawnPoint> respawnPoints) {
+		this.respawnPoints = respawnPoints;
+	}
+
+	public void setDoors(Collection<Door> doors) {
+		this.doors = doors;
+	}
+
+	public void setBarrels(Collection<Barrel> barrels) {
+		this.barrels = barrels;
+	}
+
+	public void setPlates(Collection<PressurePlate> plates) {
+		this.plates = plates;
+	}
+
+	public void setRamps(Collection<Ramp> ramps) {
+		this.ramps = ramps;
+	}
+
+	public void setPitfalls(Collection<Pitfall> pitfalls) {
+		this.pitfalls = pitfalls;
+	}
+
+	public void setPuzzles(Collection<LetterPuzzle> puzzles) {
+		this.puzzles = puzzles;
+	}
 
 	@Override
 	public void update(double delta) {
-		//Step 1, compute forces on all mobile objects
-		//Step 2, apply those forces
-
-
 		rocky.update(delta);		
 
-		if(pitfall.innerShape(rocky.radius()).contains(rocky.position().point2D())) {
-			rocky.disable();
-			rocky.respawn();
+		for (Iterator<Pitfall> it = pitfalls.iterator(); it.hasNext();) {
+			Pitfall pitfall = it.next();
+			if(pitfall.innerShape(rocky.radius()).contains(rocky.position().point2D())) {
+				rocky.disable();
+				rocky.respawn();
+			}			
 		}
 
-		if(tile.shape().contains(rocky.position().point2D())) {
-			tile.press();
-		}
-		puzzle.update(delta);
+		puzzles.forEach(puzzle -> puzzle.update(delta));
 		respawnPoints.forEach(res -> res.update(delta));
 		barrels.forEach(barrel -> barrel.update(delta));
 
@@ -111,13 +108,11 @@ public class DemoLand extends AbstractWorld implements Topographical{
 
 	@Override
 	public void render(Graphics2D g) {
-		m1.render(g);
-		m2.render(g);
 		walls.forEach(wall -> wall.render(g));
-		tile.render(g);
-		pitfall.render(g);
-		ramp.render(g);
-		puzzle.render(g);
+		pitfalls.forEach(pitfall -> pitfall.render(g));
+		puzzles.forEach(puzzle -> puzzle.render(g));
+		
+		ramps.forEach(ramp -> ramp.render(g));
 		respawnPoints.forEach(res -> res.render(g));
 		doors.forEach(door -> door.render(g));
 		plates.forEach(plate -> plate.render(g));
@@ -126,21 +121,22 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		rocky.render(g);
 	}
 
-	@Override
 	public Collection<Inputtable> getKeyboardControls() {
 		List<Inputtable> inputs = new ArrayList<>();
 		inputs.addAll(rocky.inputs());
 		return inputs;
 	}
 
-	@Override
 	public FollowCam getFollowCamera() {
 		return new FollowCam(rocky);
 	}
 
 	@Override	
 	public Vector3 getSurfaceNormal(Point position) {
-		List<Slopable> slopes = Arrays.asList(pitfall, ramp);
+		List<Slopable> slopes = new ArrayList<>();
+		slopes.addAll(ramps);
+		slopes.addAll(pitfalls);
+		
 		Vector3 mostExtremeNormal = Vector3.OUT;
 
 		for (Iterator<Slopable> it = slopes.iterator(); it.hasNext();) {
@@ -188,22 +184,5 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		return rocky;
 	}
 
-	private LetterPuzzle makeLetterPuzzle(Door codeDoorOpen) {
-		List<LetterTile> tiles = new ArrayList<>();
-		tiles.add(new LetterTile('E', new Point(0, -500)));
-		tiles.add(new LetterTile('R', new Point(100, -500)));
-		tiles.add(new LetterTile('D', new Point(200, -500)));
-		tiles.add(new LetterTile('C', new Point(300, -500)));
-		tiles.add(new LetterTile('S', new Point(400, -500)));
-		tiles.add(new LetterTile('O', new Point(500, -500)));
-		tiles.add(new LetterTile('P', new Point(600, -500)));
-		tiles.add(new LetterTile('N', new Point(700, -500)));
-
-		Map<String, Runnable> actions = new HashMap<>();
-		actions.put("CODE", () -> System.out.println("You did it!"));
-		actions.put("OPEN", () -> codeDoorOpen.open());
-
-		return new LetterPuzzle(tiles, actions, rocky);
-	}
 
 }
