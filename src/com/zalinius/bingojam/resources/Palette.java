@@ -13,6 +13,8 @@ public class Palette {
 	public static final Color GROUND = Color.DARK_GRAY.darker().darker();
 	public static final Color BOUNCE = Color.ORANGE;
 	public static final Color DOOR = new Color(.6f, .6f, .85f);
+	public static final Color BARREL = Color.RED.darker();
+	public static final Color PLATE = Color.RED.darker().darker();
 
 
 	public static final Color DEBUG = new Color(1f, 0f, 1f);

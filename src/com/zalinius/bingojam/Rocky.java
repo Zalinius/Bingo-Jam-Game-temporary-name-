@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.zalinius.bingojam.physics.CollideableLine;
+import com.zalinius.bingojam.physics.Kinetic;
 import com.zalinius.bingojam.physics.Quaternion;
 import com.zalinius.bingojam.physics.Topographical;
 import com.zalinius.bingojam.physics.Vector3;
@@ -25,6 +26,7 @@ import com.zalinius.bingojam.physics.forces.in3d.NetForce3D;
 import com.zalinius.bingojam.physics.forces.in3d.NormalForce3D;
 import com.zalinius.bingojam.physics.forces.in3d.StaticFriction3D;
 import com.zalinius.bingojam.resources.Palette;
+import com.zalinius.bingojam.utilities.Geometry;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
@@ -33,7 +35,7 @@ import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.physics.Vector;
 import com.zalinius.zje.physics.Vertex;
 
-public class Rocky implements GameObject, Locatable{
+public class Rocky implements GameObject, Locatable, Kinetic{
 
 	private Vertex center;
 	private Quaternion orientation;
@@ -66,6 +68,20 @@ public class Rocky implements GameObject, Locatable{
 		Vector wallbumpingImpulse = getImpulseFromHittingWalls();
 		center.impulse(wallbumpingImpulse);
 
+		center.update(netForces(), delta);
+
+		//Update orientation
+		if(center.velocity().length() != 0) {
+			Vector3 rotationAxis = Quaternion.rotateAroundAxis(Vector3.IN, Math.PI/2, new Vector3(center.velocity()) );
+			double deltaRotation = (delta*center.velocity().length()) / radius;
+			Quaternion deltaOrientation = Quaternion.buildQuaternion(rotationAxis, deltaRotation);
+			orientation = orientation.multiply(deltaOrientation);
+			orientation = orientation.normalize();
+		}
+
+	}
+	
+	public Vector netForces() {
 		GravityForce3D gravityForce = new GravityForce3D(center, 500);
 		Forceful pushingForce = getPushingForce();
 
@@ -80,17 +96,8 @@ public class Rocky implements GameObject, Locatable{
 		Forceful3D netForcesOnRocky = new NetForce3D(directForces, normalForce3D, new Force3D(kineticFriction.getForce()), staticFriction, new Force3D(wallNormalForces.getForce()));
 
 		Vector forceOnRocky2D = netForcesOnRocky.getForce().project();
-		center.update(forceOnRocky2D, delta);
 
-		//Update orientation
-		if(center.velocity().length() != 0) {
-			Vector3 rotationAxis = Quaternion.rotateAroundAxis(Vector3.IN, Math.PI/2, new Vector3(center.velocity()) );
-			double deltaRotation = (delta*center.velocity().length()) / radius;
-			Quaternion deltaOrientation = Quaternion.buildQuaternion(rotationAxis, deltaRotation);
-			orientation = orientation.multiply(deltaOrientation);
-			orientation = orientation.normalize();
-		}
-
+		return forceOnRocky2D;
 	}
 
 	private Forceful getPushingForce() {
@@ -118,10 +125,10 @@ public class Rocky implements GameObject, Locatable{
 
 		g.setColor(Palette.BRIGHT);
 		g.setStroke(new BasicStroke(5));
-		g.draw(rockyShape());
+		g.draw(shape());
 	}
 
-	public Ellipse2D.Double rockyShape() {
+	public Ellipse2D.Double shape() {
 		return new Ellipse2D.Double(center.x()-radius, center.y()-radius, 2*radius, 2*radius);
 	}	
 
@@ -177,7 +184,7 @@ public class Rocky implements GameObject, Locatable{
 		return center.position();
 	}
 
-	public Vertex physicality() {
+	public Vertex getPhysical() {
 		return center;
 	}
 
@@ -209,7 +216,7 @@ public class Rocky implements GameObject, Locatable{
 
 	private List<Vector> getLocalWallNormals() {
 		List<Vector> normals = new ArrayList<>();
-		Ellipse2D.Double circle = rockyShape();
+		Ellipse2D.Double circle = shape();
 		for (Iterator<CollideableLine> it = worldSurface.getAdjacentWalls(circle).iterator(); it.hasNext();) {
 			CollideableLine wall = it.next();
 			Line2D.Double line = wall.line();
@@ -240,7 +247,7 @@ public class Rocky implements GameObject, Locatable{
 
 	private Vector getImpulseFromHittingWalls() {
 		Vector impulse = new Vector();
-		Ellipse2D.Double circle = rockyShape();
+		Ellipse2D.Double circle = shape();
 		Iterator<CollideableLine> it = worldSurface.getAdjacentWalls(circle).iterator();
 
 		while(it.hasNext()) {
@@ -250,7 +257,7 @@ public class Rocky implements GameObject, Locatable{
 			if(Collisions.intersection(circle, line)) {
 				Vector velocity = center.velocity();
 				Vector reflector = new Vector(line);
-				Vector reflection = reflector.rejection(velocity).reflect().scale(center.mass()*(combinedBouncyness(bouncyness, wall.bouncyness()) + 1));
+				Vector reflection = reflector.rejection(velocity).reflect().scale(center.mass()*(Geometry.combinedBouncyness(bouncyness, wall.bouncyness()) + 1));
 
 				Vector localRockyCenter = new Vector(new Point(line.getP1()), new Point(circle.getCenterX(), circle.getCenterY()));
 				Vector direction = reflector.rejection(localRockyCenter);
@@ -267,8 +274,5 @@ public class Rocky implements GameObject, Locatable{
 		return impulse;
 	}
 
-	private static double combinedBouncyness(double b1, double b2) {
-		return Math.sqrt(b1*b2);
-	}
 
 }

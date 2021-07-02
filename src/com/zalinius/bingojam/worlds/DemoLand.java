@@ -14,6 +14,7 @@ import java.util.Map;
 import com.zalinius.bingojam.Magnet;
 import com.zalinius.bingojam.Rocky;
 import com.zalinius.bingojam.physics.CollideableLine;
+import com.zalinius.bingojam.physics.Kinetic;
 import com.zalinius.bingojam.physics.Topographical;
 import com.zalinius.bingojam.physics.Vector3;
 import com.zalinius.bingojam.pieces.Door;
@@ -23,8 +24,10 @@ import com.zalinius.bingojam.pieces.RespawnPoint;
 import com.zalinius.bingojam.pieces.Slopable;
 import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.plugins.FollowCam;
+import com.zalinius.bingojam.puzzle.Barrel;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
 import com.zalinius.bingojam.puzzle.LetterTile;
+import com.zalinius.bingojam.puzzle.PressurePlate;
 import com.zalinius.bingojam.utilities.Geometry;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
@@ -37,7 +40,9 @@ public class DemoLand extends AbstractWorld implements Topographical{
 	private Collection<Wall> walls;
 	private Collection<RespawnPoint> respawnPoints;
 	private Collection<Door> doors;
-	
+	private Collection<Barrel> barrels;
+	private Collection<PressurePlate> plates;
+
 	private Magnet m1 = new Magnet(new Point(100, -100), UnitVector.up(), 1000);
 	private Magnet m2 = new Magnet(new Point(100, -150), UnitVector.down(), 1000);
 
@@ -50,7 +55,7 @@ public class DemoLand extends AbstractWorld implements Topographical{
 
 	public DemoLand() {
 		rocky = new Rocky(this);
-		
+
 		walls = Arrays.asList(new Wall(new Point(200, 200), new Point(300, 200), 1), new Wall(new Point(350, 200), new Point(450, 200), true));
 		tile = new LetterTile('A', new Point(-200, 200));
 		pitfall = new Pitfall(new Point(-250, -250), 200, 200);
@@ -59,9 +64,10 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		Door codeDoorOpen = new Door(new Point(-400, -100), new Point(-400, 100));
 		doors = Arrays.asList(codeDoorOpen);
 		puzzle = makeLetterPuzzle(codeDoorOpen);
-
+		barrels = Arrays.asList(new Barrel(new Point(100, 100), 25, this), new Barrel(new Point(425, -150), 25, this), new Barrel(new Point(500, -150), 25, this));
+		plates = Arrays.asList(new PressurePlate(new Point(450, -250), 75));
 	}
-	
+
 	public RespawnPoint buildRespawnPoint(Point respawnPoint) {
 		Runnable setRespawn = () -> rocky.setRespawn(respawnPoint);
 		Shape respawnTrigger = Geometry.centeredSquare(respawnPoint, 100);
@@ -71,24 +77,11 @@ public class DemoLand extends AbstractWorld implements Topographical{
 
 	@Override
 	public void update(double delta) {
-		rocky.update(delta);		
+		//Step 1, compute forces on all mobile objects
+		//Step 2, apply those forces
 
-		//TODO fix for new forces
-		//		double ScalarForce = Magnet.forceBetweenMagnets(m1, m2);
-		//		Vector forceOnM1 = new Vector(m1.position(), m2.position()).scale(ScalarForce);
-		//		forceOnM1 = forceOnM1.add(Friction.dynamicFriction(m1, 100));
-		//		m1.update(forceOnM1, delta);
-		//
-		//		Vector forceOnM2 = new Vector(m2.position(), m1.position()).scale(ScalarForce);
-		//		forceOnM2 = forceOnM2.add(Friction.dynamicFriction(m2, 100));
-		//
-		//		if(forceOnM2.length() > Friction.staticFrictionThreshold(m2, 150) || m2.velocity().length() > 1) {
-		//			m2.update(forceOnM2, delta);
-		//		}
-		//		else {
-		//			m2.update(m2.velocity().scale(-1 * m2.mass()), delta);
-		//		}
-		//		
+
+		rocky.update(delta);		
 
 		if(pitfall.innerShape(rocky.radius()).contains(rocky.position().point2D())) {
 			rocky.disable();
@@ -100,6 +93,19 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		}
 		puzzle.update(delta);
 		respawnPoints.forEach(res -> res.update(delta));
+		barrels.forEach(barrel -> barrel.update(delta));
+
+		for (Iterator<PressurePlate> itPlate = plates.iterator(); itPlate.hasNext();) {
+			PressurePlate pressurePlate = itPlate.next();
+			boolean pressurePlatePressed = false;
+			for (Iterator<Barrel> itBarrel = barrels.iterator(); itBarrel.hasNext();) {
+				Barrel barrel = itBarrel.next();
+				if(pressurePlate.shape().contains(barrel.getPhysical().position().point2D())) {
+					pressurePlatePressed = true;
+				}
+			}
+			pressurePlate.setPressed(pressurePlatePressed);
+		}
 
 	}
 
@@ -114,7 +120,8 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		puzzle.render(g);
 		respawnPoints.forEach(res -> res.render(g));
 		doors.forEach(door -> door.render(g));
-		
+		plates.forEach(plate -> plate.render(g));
+		barrels.forEach(barrel -> barrel.render(g));
 
 		rocky.render(g);
 	}
@@ -167,7 +174,20 @@ public class DemoLand extends AbstractWorld implements Topographical{
 
 		return adjacentWalls;
 	}
-	
+
+	@Override
+	public List<Kinetic> getKineticObjects() {
+		List<Kinetic> kinetics = new ArrayList<>();
+		kinetics.add(rocky);
+		kinetics.addAll(barrels);
+		return kinetics;
+	}
+
+	@Override
+	public Kinetic getRockyKinetics() {
+		return rocky;
+	}
+
 	private LetterPuzzle makeLetterPuzzle(Door codeDoorOpen) {
 		List<LetterTile> tiles = new ArrayList<>();
 		tiles.add(new LetterTile('E', new Point(0, -500)));
@@ -178,11 +198,11 @@ public class DemoLand extends AbstractWorld implements Topographical{
 		tiles.add(new LetterTile('O', new Point(500, -500)));
 		tiles.add(new LetterTile('P', new Point(600, -500)));
 		tiles.add(new LetterTile('N', new Point(700, -500)));
-		
+
 		Map<String, Runnable> actions = new HashMap<>();
 		actions.put("CODE", () -> System.out.println("You did it!"));
 		actions.put("OPEN", () -> codeDoorOpen.open());
-		
+
 		return new LetterPuzzle(tiles, actions, rocky);
 	}
 

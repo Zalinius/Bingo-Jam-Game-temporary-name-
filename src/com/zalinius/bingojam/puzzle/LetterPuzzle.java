@@ -49,6 +49,8 @@ public class LetterPuzzle implements GameObject{
 
 	public final PuzzleState updateState() {
 		return new PuzzleState() {
+			private double age = 0;
+			private final double lifeTime = 15; //before resetting
 
 			@Override
 			public void update(double delta) {
@@ -56,11 +58,12 @@ public class LetterPuzzle implements GameObject{
 					LetterTile letterTile = it.next();
 					if(letterTile.shape().contains(player.position().point2D())) {
 						if(!letterTile.isPressed()) {
+							age = 0;
 							letterTile.press();
 							codeEntry += letterTile.letter();
 
 							if(puzzleActions.containsKey(codeEntry)) {
-								//TODO play a little sound
+								//TODO SOUND: play a little sound
 								Runnable actionForCode = puzzleActions.get(codeEntry);
 								actionForCode.run();
 								
@@ -69,14 +72,21 @@ public class LetterPuzzle implements GameObject{
 								puzzleState = winAnimation();
 							}
 							else if(codeEntry.length() == letterTiles.size()) {
-								//TODO play WRONG sound
+								//TODO SOUND: play WRONG sound
 								resetPuzzle();
 								puzzleState = wrongAnimation();
 							}
-							//TODO reset puzzle if it's been unused for too long
 						}
 					}
 				}
+				
+				age += delta;
+				if(age >= lifeTime) {
+					resetPuzzle();
+					puzzleState = updateState();
+					//TODO SOUND: play a little reset sound
+				}
+				
 			}};
 	}
 
