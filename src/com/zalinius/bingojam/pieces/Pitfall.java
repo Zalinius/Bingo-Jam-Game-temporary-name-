@@ -6,13 +6,12 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import com.zalinius.bingojam.physics.Quaternion;
 import com.zalinius.bingojam.physics.Vector3;
 import com.zalinius.bingojam.resources.Palette;
+import com.zalinius.bingojam.utilities.Geometry;
 import com.zalinius.zje.physics.Collideable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Locatable;
@@ -23,7 +22,11 @@ public class Pitfall implements Collideable, Locatable, Slopable{
 	
 	private Point center;
 	private double width, height;
-	
+
+	public Pitfall(Point center, double width) {
+		this(center, width, width);
+	}
+
 	public Pitfall(Point center, double width, double height) {
 		this.center = center;
 		this.width = width;
@@ -37,6 +40,7 @@ public class Pitfall implements Collideable, Locatable, Slopable{
 		g.setColor(pitColor);
 		g.fill(shape());
 		
+		g.setStroke(Palette.THICK);
 		g.setColor(outlineColor);
 		g.draw(shape());
 	}
@@ -66,7 +70,7 @@ public class Pitfall implements Collideable, Locatable, Slopable{
 		}
 		else {
 			Ellipse2D.Double circle = new Ellipse2D.Double(position.x - radius, position.y - radius, 2*radius, 2*radius);
-			Iterator<Line2D.Double> it = lines().iterator();
+			Iterator<Line2D.Double> it = Geometry.lines(shape()).iterator();
 			Line2D.Double closestLine = it.next();
 			while (it.hasNext()) {
 				Line2D.Double line = it.next();
@@ -85,18 +89,5 @@ public class Pitfall implements Collideable, Locatable, Slopable{
 		}
 	}
 	
-	private List<Line2D.Double> lines(){
-		Rectangle2D.Double rectangle = shape();
-		double x = rectangle.x;
-		double y = rectangle.y;
-		double w = rectangle.width;
-		double h = rectangle.height;
-		Line2D.Double l1 = new Line2D.Double(x,   y,   x+w, y);
-		Line2D.Double l2 = new Line2D.Double(x+w, y,   x+w, y+h);
-		Line2D.Double l3 = new Line2D.Double(x+w, y+h, x,   y+h );
-		Line2D.Double l4 = new Line2D.Double(x,   y+h, x,   y);
-		
-		return Arrays.asList(l1, l2, l3, l4);
-	}
 
 }

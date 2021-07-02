@@ -26,7 +26,8 @@ public class BingoJamGame extends GameContainer{
 
 	public BingoJamGame() {
 		super("Bingo jam game (temp name)", 1000, 1000);
-		this.gameWorld = WorldFactory.demoLand();
+		this.gameWorld = WorldFactory.theWorld();
+//		this.gameWorld = WorldFactory.demoLand();
 		addControls(getControls(), null);
 		prepareResources();
 	}

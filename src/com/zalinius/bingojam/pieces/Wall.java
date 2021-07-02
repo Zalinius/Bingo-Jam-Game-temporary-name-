@@ -1,6 +1,5 @@
 package com.zalinius.bingojam.pieces;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
@@ -55,7 +54,7 @@ public class Wall implements CollideableLine {
 			g.draw(arrow);
 		}
 		
-		g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		g.setStroke(Palette.THICK);
 		g.setColor(computeBouncynessColor());
 		g.draw(line());	
 

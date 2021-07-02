@@ -21,7 +21,8 @@ import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
-import com.zalinius.bingojam.puzzle.PressurePlate;
+import com.zalinius.bingojam.puzzle.BarrelPlate;
+import com.zalinius.bingojam.puzzle.Button;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
@@ -33,10 +34,14 @@ public class World implements GameObject, Topographical{
 	private Collection<Wall> walls;
 	private Collection<RespawnPoint> respawnPoints;
 	private Collection<Door> doors;
+	private Collection<Button> buttons;
+	
 	private Collection<Barrel> barrels;
-	private Collection<PressurePlate> plates;
+	private Collection<BarrelPlate> barrelPlates;
+	
 	private Collection<Ramp> ramps;
 	private Collection<Pitfall> pitfalls;
+	
 	private Collection<LetterPuzzle> puzzles;
 
 
@@ -56,12 +61,16 @@ public class World implements GameObject, Topographical{
 		this.doors = doors;
 	}
 
+	public void setButtons(Collection<Button> buttons) {
+		this.buttons = buttons;
+	}
+
 	public void setBarrels(Collection<Barrel> barrels) {
 		this.barrels = barrels;
 	}
 
-	public void setPlates(Collection<PressurePlate> plates) {
-		this.plates = plates;
+	public void setBarrelPlates(Collection<BarrelPlate> barrelPlates) {
+		this.barrelPlates = barrelPlates;
 	}
 
 	public void setRamps(Collection<Ramp> ramps) {
@@ -89,11 +98,12 @@ public class World implements GameObject, Topographical{
 		}
 
 		puzzles.forEach(puzzle -> puzzle.update(delta));
+		buttons.forEach(button -> button.update(delta));
 		respawnPoints.forEach(res -> res.update(delta));
 		barrels.forEach(barrel -> barrel.update(delta));
 
-		for (Iterator<PressurePlate> itPlate = plates.iterator(); itPlate.hasNext();) {
-			PressurePlate pressurePlate = itPlate.next();
+		for (Iterator<BarrelPlate> itPlate = barrelPlates.iterator(); itPlate.hasNext();) {
+			BarrelPlate pressurePlate = itPlate.next();
 			boolean pressurePlatePressed = false;
 			for (Iterator<Barrel> itBarrel = barrels.iterator(); itBarrel.hasNext();) {
 				Barrel barrel = itBarrel.next();
@@ -108,15 +118,15 @@ public class World implements GameObject, Topographical{
 
 	@Override
 	public void render(Graphics2D g) {
-		walls.forEach(wall -> wall.render(g));
 		pitfalls.forEach(pitfall -> pitfall.render(g));
 		puzzles.forEach(puzzle -> puzzle.render(g));
-		
 		ramps.forEach(ramp -> ramp.render(g));
 		respawnPoints.forEach(res -> res.render(g));
 		doors.forEach(door -> door.render(g));
-		plates.forEach(plate -> plate.render(g));
+		buttons.forEach(button -> button.render(g));
+		barrelPlates.forEach(plate -> plate.render(g));
 		barrels.forEach(barrel -> barrel.render(g));
+		walls.forEach(wall -> wall.render(g));
 
 		rocky.render(g);
 	}

@@ -1,8 +1,11 @@
 package com.zalinius.bingojam.utilities;
 
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.Arrays;
+import java.util.List;
 
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.physics.Vector;
@@ -41,6 +44,25 @@ public class Geometry {
 	public static boolean twoCirclesColliding(Ellipse2D.Double c1, Ellipse2D.Double c2) {
 		double distanceBetweenCenters = new Vector(c1.getCenterX(), c1.getCenterY(), c2.getCenterX(), c2.getCenterY()).length();
 		return distanceBetweenCenters <= (c1.width + c2.width) / 2.0;
+	}
+
+	
+	public static List<Line2D.Double> lines(Rectangle2D.Double shape){
+		Rectangle2D.Double rectangle = shape;
+		double x = rectangle.x;
+		double y = rectangle.y;
+		double w = rectangle.width;
+		double h = rectangle.height;
+		Line2D.Double l1 = new Line2D.Double(x,   y,   x+w, y);
+		Line2D.Double l2 = new Line2D.Double(x+w, y,   x+w, y+h);
+		Line2D.Double l3 = new Line2D.Double(x+w, y+h, x,   y+h );
+		Line2D.Double l4 = new Line2D.Double(x,   y+h, x,   y);
+		
+		return Arrays.asList(l1, l2, l3, l4);
+	}
+	
+	public static double lineLength(Line2D.Double line) {
+		return new Vector(line).length();
 	}
 
 }

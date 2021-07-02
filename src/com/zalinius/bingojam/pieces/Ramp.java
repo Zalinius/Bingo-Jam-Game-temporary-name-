@@ -21,18 +21,16 @@ public class Ramp implements Collideable, Graphical, Slopable{
 	private double width, height;
 	private Vector3 normal;
 	
-	public Ramp(Point center, double width, double height) {
+	public Ramp(Point center, double width, double height, Vector3 normal) {
 		this.center = center;
 		this.width = width;
 		this.height = height;
-		this.normal = new Vector3(1, 0, -5).normalize();
+		this.normal = normal.normalize();
 	}
 	
 	@Override
 	public void render(Graphics2D g) {
-		g.setColor(Palette.BRIGHT);
 		g.setStroke(new BasicStroke(5));
-	//	g.draw(shape());
 		
 		Vector direction = normal.project().normalize();
 		Point2D lowPoint;
@@ -63,4 +61,5 @@ public class Ramp implements Collideable, Graphical, Slopable{
 			return Vector3.OUT;
 		}
 	}
+	
 }

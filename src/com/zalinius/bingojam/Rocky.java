@@ -141,6 +141,22 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		inputs.add(directionInput(KeyEvent.VK_S, new Vector( 0,  1)));
 		inputs.add(directionInput(KeyEvent.VK_D, new Vector( 1,  0)));
 
+		inputs.add(new Inputtable() {
+			
+			@Override
+			public void released() {/*Do nothing*/}
+			
+			@Override
+			public void pressed() {
+				System.out.println("(" + (int)position().x + ", " + (int)position().y + ")");				
+			}
+			
+			@Override
+			public int keyCode() {
+				return KeyEvent.VK_SPACE;
+			}
+		});
+		
 		return inputs;
 	}
 

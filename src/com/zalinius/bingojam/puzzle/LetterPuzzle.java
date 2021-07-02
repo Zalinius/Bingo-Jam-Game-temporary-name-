@@ -96,7 +96,7 @@ public class LetterPuzzle implements GameObject{
 		return new PuzzleState() {
 			private double age = 0;
 			private final double lifeTime = 5;
-			private final double tileLitTime = 0.05;
+			private final double tileLitTime = .3 / letterTiles.size();
 
 			@Override
 			public void update(double delta) {

@@ -9,13 +9,13 @@ import com.zalinius.zje.architecture.Graphical;
 import com.zalinius.zje.physics.Collideable;
 import com.zalinius.zje.physics.Point;
 
-public class PressurePlate implements Collideable, Graphical{
+public class BarrelPlate implements Collideable, Graphical{
 
 	private final Point center;
 	private final double width;
 	private boolean pressed;
 	
-	public PressurePlate(Point center, double width) {
+	public BarrelPlate(Point center, double width) {
 		this.center = center;
 		this.width = width;
 		this.pressed = false;
