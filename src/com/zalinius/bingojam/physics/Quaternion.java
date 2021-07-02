@@ -1,9 +1,12 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.physics;
 
 public class Quaternion {
 	private final double a, b, c, d;
 	
-	private Quaternion() {
+	/**
+	 * Builds an identity quaternion (no rotation)
+	 */
+	public Quaternion() {
 		this(1, 0, 0, 0);
 	}
 	
@@ -39,4 +42,37 @@ public class Quaternion {
 	public static Vector3 rotateAroundAxis(Vector3 rotationAxis, double radians, Vector3 rotatee) {
 		return buildQuaternion(rotationAxis, radians).rotate(rotatee);		
 	}
+	
+	
+	/**
+	 * Creates a quaternion which is the Concatenation of a new orientation to the current one, such that the current one occurred first
+	 * Both the original and argument quaternions are unchanged
+	 * @param q The orientation to be applied second, which is multiplied from the left
+	 * @return A new quaternion corresponding to q*this
+	 */
+	public Quaternion multiply(Quaternion q) {
+		double aNew = q.a*a - q.b*b - q.c*c - q.d*d;
+		double bNew = q.a*b + q.b*a + q.c*d - q.d*c;
+		double cNew = q.a*c - q.b*d + q.c*a + q.d*b;
+		double dNew = q.a*d + q.b*c - q.c*b + q.d*a;
+		
+		return new Quaternion(aNew, bNew, cNew, dNew);
+	}
+	
+	@Override
+	public String toString() {
+		return "<" + a + ", " + b + ", " + c + ", " + d + ">";
+	}
+	
+	public double length() {
+		return Math.sqrt(a*a + b*b + c*c + d*d);
+	}
+	
+	public Quaternion normalize() {
+		double length = length();
+		return new Quaternion(a/length, b/length, c/length, d/length);
+	}
 }
+
+
+

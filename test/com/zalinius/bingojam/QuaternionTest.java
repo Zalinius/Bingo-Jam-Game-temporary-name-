@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.zalinius.bingojam.physics.Quaternion;
+import com.zalinius.bingojam.physics.Vector3;
+
 public class QuaternionTest {
 	public final double ERROR_MARGIN = 1E-12;
 	

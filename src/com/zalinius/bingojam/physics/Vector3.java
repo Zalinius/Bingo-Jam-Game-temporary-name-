@@ -1,10 +1,11 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.physics;
 
 import com.zalinius.zje.physics.Vector;
 
 public class Vector3 {
 
-	public static final Vector3 OUT = new Vector3(0, 0, 1);
+	public static final Vector3 OUT = new Vector3(0, 0, -1);
+	public static final Vector3 IN  = new Vector3(0, 0, 1);
 	
 	
 	public final double x;
@@ -37,12 +38,24 @@ public class Vector3 {
 		return this.scale(1/length());
 	}
 	
+	public Vector3 reflect() {
+		return this.scale(-1);
+	}
+	
 	/**
 	 * Projects a 3D vector onto the XY-plane
 	 * @return The 2D projection of the vector on the XY-plane
 	 */
 	public Vector project() {
 		return new Vector(x, y);
+	}
+	
+	public static double dotProduct(Vector3 v1, Vector3 v2) {
+		return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;  
+	}
+	
+	public Vector3 add(Vector3 v) {
+		return new Vector3(x+v.x, y+v.y, z+v.z);
 	}
 
 	@Override
@@ -81,6 +94,16 @@ public class Vector3 {
 	public String toString() {
 		return "<" + x + ", " + y + ", " + z + ">";
 	}
+	
+	
+	public static double angleBetweenVectors(Vector3 v1, Vector3 v2) {
+		v1 = v1.normalize();
+		v2 = v2.normalize();
+		
+		return Math.acos(dotProduct(v1, v2));		
+	}
+
+	
 
 	
 	

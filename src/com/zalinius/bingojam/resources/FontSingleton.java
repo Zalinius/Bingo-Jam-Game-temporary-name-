@@ -1,4 +1,4 @@
-package com.zalinius.bingojam;
+package com.zalinius.bingojam.resources;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -9,17 +9,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class FontFactory {
+public class FontSingleton {
 	
-	private static List<String> fontFamilyPriorityOrder(){
-		return Arrays.asList("Comic Sans MS");
-	}
-	
-	private static Font defaultFont() throws FontFormatException, IOException {
-		return Font.createFont(Font.TRUETYPE_FONT, new File("res/ldfcomicsans-font/Ldfcomicsans-jj7l.ttf"));
-	}
+	private static Font font;
 
 	public static Font getFont() {
+		if(font == null) {
+			font = findPrioritizedFont();
+		}
+		return font;
+	}
+	
+	private static Font findPrioritizedFont() {
 		for (Iterator<String> it = fontFamilyPriorityOrder().iterator(); it.hasNext();) {
 			String fontFamilyName = it.next();
 			if(availableFontFamilies().contains(fontFamilyName)) {
@@ -28,7 +29,7 @@ public class FontFactory {
 		}
 		
 		try {
-			return defaultFont();
+			return packagedFont();
 		} catch (FontFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -40,5 +41,13 @@ public class FontFactory {
 	
 	private static List<String> availableFontFamilies(){
 		return Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+	}
+	
+	private static List<String> fontFamilyPriorityOrder(){
+		return Arrays.asList("Comic Sans MS");
+	}
+	
+	private static Font packagedFont() throws FontFormatException, IOException {
+		return Font.createFont(Font.TRUETYPE_FONT, new File("res/ldfcomicsans-font/Ldfcomicsans-jj7l.ttf"));
 	}
 }
