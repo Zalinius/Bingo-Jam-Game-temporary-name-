@@ -86,6 +86,14 @@ public class WorldFactory {
 		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-6400, -2100), 800), 200, Direction.EAST, Direction.WEST));
 		walls.add(new Wall(new Point(-6200, -2000), new Point(-6000, -2000)));
 		walls.add(new Wall(new Point(-6600, -2000), new Point(-6800, -2000)));
+		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(new Point(-7000, -2100), 400, 200)));
+		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-7600, -2100), 800), 200, Direction.NORTH, Direction.EAST, Direction.WEST));
+		walls.addAll(buildAllButOneWall(Geometry.centeredSquare(new Point(-7600, -2700), 400), Direction.SOUTH));
+		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(new Point(-7600, -2100), 200, 200)));
+		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(new Point(-8500, -2100), 1000, 200)));
+		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-9200, -2100), 400), 200, Direction.EAST));
+		
+		
 		
 		//Green Wing
 		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, -MAIN_ROOM_RADIUS - 400), 200, 800)));
@@ -223,6 +231,14 @@ public class WorldFactory {
 		doors.add(secondBarrelSideDoor);
 		Door secondBarrelDoor = new Door(new Point(-6800, -2000), new Point(-6800, -2200), Palette.RED);
 		doors.add(secondBarrelDoor);
+		Door thirdBarrelRoomDoor = new Door(new Point(-8000, -2000), new Point(-8000, -2200), Palette.RED);
+		doors.add(thirdBarrelRoomDoor);
+		Door thirdBarrelRoomLeftDoor = new Door(new Point(-7700, -2000), new Point(-7700, -2200), Palette.RED);
+		doors.add(thirdBarrelRoomLeftDoor);
+		Door thirdBarrelRoomRightDoor = new Door(new Point(-7500, -2000), new Point(-7500, -2200), Palette.RED);
+		doors.add(thirdBarrelRoomRightDoor);
+		Door thirdBarrelRoomTopDoor = new Door(new Point(-7700, -2500), new Point(-7500, -2500), Palette.RED);
+		doors.add(thirdBarrelRoomTopDoor);
 		
 		//green doors
 		Door mazeDoor = new Door(new Point(-3600, -4850), new Point(-3400, -4850), Palette.GREEN);
@@ -252,6 +268,11 @@ public class WorldFactory {
 		secondBarrels.add(new Barrel(new Point(-6400, -2400), world));
 		secondBarrels.add(new Barrel(new Point(-6400, -1850), world));
 		barrels.addAll(secondBarrels);
+		List<Barrel> thirdRoomBarrels = new ArrayList<>();
+		thirdRoomBarrels.add(new Barrel(new Point(-7600, -2700), world));
+		thirdRoomBarrels.add(new Barrel(new Point(-7600, -2400), world));
+		thirdRoomBarrels.add(new Barrel(new Point(-7600, -2100), world));
+		barrels.addAll(thirdRoomBarrels);
 		
 		List<BarrelPlate> plates = new ArrayList<>();
 		plates.add(new BarrelPlate(new Point(-5300, -1900), () -> firstBarrelDoor.open(), () -> firstBarrelDoor.close()));
@@ -262,12 +283,31 @@ public class WorldFactory {
 		plates.addAll(secondRoomPlates);
 		List<PlateAnd> plateAnds = new ArrayList<>();
 		plateAnds.add(new PlateAnd(secondRoomPlates, () -> secondBarrelDoor.open(), () -> secondBarrelDoor.close()));
+
+		
+		plates.add(new BarrelPlate(new Point(-7600, -1900), () -> {thirdBarrelRoomLeftDoor.open(); thirdBarrelRoomRightDoor.open();}, ()->{thirdBarrelRoomLeftDoor.close(); thirdBarrelRoomRightDoor.close();}));
+		
+		List<BarrelPlate> thirdRoomMainDoorPlates = new ArrayList<>();
+		thirdRoomMainDoorPlates.add(new BarrelPlate(new Point(-7900, -2400), noAction(), noAction()));
+		thirdRoomMainDoorPlates.add(new BarrelPlate(new Point(-7900, -1800), noAction(), noAction()));
+		thirdRoomMainDoorPlates.add(new BarrelPlate(new Point(-7600, -2100), noAction(), noAction()));
+		
+		plateAnds.add(new PlateAnd(thirdRoomMainDoorPlates, () -> thirdBarrelRoomDoor.open(), () -> thirdBarrelRoomDoor.close()));
+		plates.addAll(thirdRoomMainDoorPlates);
+
+		List<BarrelPlate> thirdRoomTopDoorPlates = new ArrayList<>();
+		thirdRoomTopDoorPlates.add(new BarrelPlate(new Point(-7450, -2400), noAction(), noAction()));
+		thirdRoomTopDoorPlates.add(new BarrelPlate(new Point(-7750, -2400), noAction(), noAction()));
+		plateAnds.add(new PlateAnd(thirdRoomTopDoorPlates, () -> thirdBarrelRoomTopDoor.open(), () -> thirdBarrelRoomTopDoor.close()));
+		plates.addAll(thirdRoomTopDoorPlates);
+
 		
 		List<Button> buttons = new ArrayList<>();
 		buttons.add(new Button(new Point(700, -2300), ()-> tutorialButtonDoor.open(), rocky, Palette.GRAY_BACKGROUND));
 		//Red Wing	
 		buttons.add(new Button(new Point(-5100, -2300), () -> firstBarrel.reset(), rocky, Palette.RED_BACKGROUND, false));
 		buttons.add(new Button(new Point(-6100, -2400), () -> secondBarrels.forEach(b -> b.reset()), rocky, Palette.RED_BACKGROUND, false));
+		buttons.add(new Button(new Point(-7300, -2400), () -> thirdRoomBarrels.forEach(b -> b.reset()), rocky, Palette.RED_BACKGROUND, false));
 		//Green wing
 		buttons.add(new Button(new Point(-3500, -4200), () -> mazeDoor.open(), rocky, Palette.GREEN_BACKGROUND, false));
 		//Blue Wing
@@ -279,9 +319,10 @@ public class WorldFactory {
 		
 		List<TextSpot> texts = new ArrayList<>();
 		texts.add(new TextSpot(new Point(-3500, -5800), GREEN_CODE));
+		texts.add(new TextSpot(new Point(-9200, -2100), RED_CODE));
 		texts.add(new TextSpot(new Point(-1500, 1600), BLUE_CODE));
 		
-		
+				
 
 		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts);
 
