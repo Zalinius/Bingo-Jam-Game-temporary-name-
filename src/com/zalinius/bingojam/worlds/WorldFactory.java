@@ -77,12 +77,38 @@ public class WorldFactory {
 		walls.addAll(octogonalRoom());
 		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, MAIN_ROOM_RADIUS + 400), 400 , 800)));
 		
+		//Blue Wing
+		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(MAIN_ROOM_RADIUS+200, 0), 400, 200)));
+		walls.add(new Wall(new Point(-2400, -2200), new Point(-1400, -1200)));
+		walls.add(new Wall(new Point(-2400, -2000), new Point(-1600, -1200)));
+		walls.addAll(northSouthCorridor(Geometry.centeredSquare(new Point(-1500, -1100), 200)));
+		walls.add(new Wall(new Point(-1400, -1000), new Point(-1100, -700)));
+		walls.add(new Wall(new Point(-1600, -1000), new Point(-1900, -700)));
+		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(new Point(-1500, -550), 800, 300)));
+		walls.addAll(buildAllButOneWall(Geometry.centeredRectangle(new Point(-1650, -200), 100, 400), Direction.WEST));
+		walls.addAll(buildWalls(Geometry.centeredRectangle(new Point(-1650,  300), 100, 200)));
+		walls.addAll(buildAllButOneWall(Geometry.centeredRectangle(new Point(-1350, 200), 100, 400), Direction.EAST));		
+		walls.addAll(buildWalls(Geometry.centeredRectangle(new Point(-1350, -300), 100, 200)));
+		walls.add(new Wall(new Point(-1100, -400), new Point(-1100, 0)));
+		walls.add(new Wall(new Point(-1900,  400), new Point(-1900, 0)));
+		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(new Point(-1800, -200), 200, 400)));
+		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(new Point(-1200, 200), 200, 400)));
+		walls.add(new Wall(new Point(-1900, 400), new Point(-1900, 600)));
+		walls.add(new Wall(new Point(-1900, 600), new Point(-1600, 600)));
+		walls.add(new Wall(new Point(-1400, 600), new Point(-1100, 600)));
+		walls.add(new Wall(new Point(-1100, 600), new Point(-1100, 400)));
+		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(new Point(-1500, 1000), 200, 800)));
+		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-1500, 1600), 400), 200, Direction.NORTH));
+		
 		List<Pitfall> pitfalls = new ArrayList<>();
 		pitfalls.add(new Pitfall(new Point(0, -1200), 400));
+		pitfalls.add(new Pitfall(new Point(-1500, 0), 200, 400));
 
 		List<Ramp> ramps = new ArrayList<>();
 		ramps.add(new Ramp(new Point(0, -600), 200, 400, new Vector3(0, 1, -2)));
 		ramps.add(new Ramp(new Point(-2700, -2800), new Point(-2800, -2900), new Point(-2950, -2550), new Point(-3050, -2650), 1));
+		ramps.add(new Ramp(new Point(-1800, -100), 200, 200, new Vector3(0, -1, -10)));
+		ramps.add(new Ramp(new Point(-1200, 100), 200, 200, new Vector3(0,  1, -10)));
 
 		//get all the ramp end one way walls
 		walls.addAll(ramps.stream().map((ramp) -> ramp.getOneWayWall()).collect(Collectors.toList()));
@@ -91,6 +117,7 @@ public class WorldFactory {
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(0, 0)) ); //initial respawn point
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(0, -900), 200));
 		respawnPoints.add(buildRespawnPoint(rocky, MAIN_ROOM, octogonalShape())); //main room
+		respawnPoints.add(buildRespawnPoint(rocky, new Point(-1500, -1100), 200)); //blue wing start
 		
 		List<Door> doors = new ArrayList<>();
 		Door tutorialCodeDoor = new Door(new Point(-100, -2650), new Point(100, -2650));
@@ -104,9 +131,26 @@ public class WorldFactory {
 		Door blueDoor = blueDoor();
 		doors.add(blueDoor);
 		
+		Door leftDoor = new Door(new Point(-1900, -400), new Point(-1700, -400), Palette.BLUE);
+		doors.add(leftDoor);
+		Door middleDoor = new Door(new Point(-1600, -400), new Point(-1400, -400), Palette.BLUE);
+		doors.add(middleDoor);
+		Door rightDoor = new Door(new Point(-1300, -400), new Point(-1100, -400), Palette.BLUE);
+		doors.add(rightDoor);
+		Door lowerLeftDoor =  new Door(new Point(-1900, 400), new Point(-1700, 400), Palette.BLUE);
+		doors.add(lowerLeftDoor);
+		Door lowerRightDoor = new Door(new Point(-1300, 400), new Point(-1100, 400), Palette.BLUE);
+		doors.add(lowerRightDoor);
+		
 		List<Button> buttons = new ArrayList<>();
-		buttons.add(new Button(new Point(700, -2300), 50, ()-> tutorialButtonDoor.open(), rocky));
+		buttons.add(new Button(new Point(700, -2300), ()-> tutorialButtonDoor.open(), rocky));
 
+		buttons.add(new Button(new Point(-1800, -600), ()-> {leftDoor.close(); middleDoor.open(); rightDoor.open();}, rocky, false));
+		buttons.add(new Button(new Point(-1500, -800), ()-> {leftDoor.open(); middleDoor.close(); rightDoor.open();}, rocky, false));
+		buttons.add(new Button(new Point(-1200, -600), ()-> {leftDoor.open(); middleDoor.open(); rightDoor.close();}, rocky, false));
+
+		buttons.add(new Button(new Point(-1500, -300), ()-> {lowerLeftDoor.open(); lowerRightDoor.close();}, rocky, false));
+		buttons.add(new Button(new Point(-1500,  300), ()-> {lowerLeftDoor.close(); lowerRightDoor.open();}, rocky, false));
 		
 		List<LetterPuzzle> puzzles =new ArrayList<>();
 		puzzles.add(tutorialLetterPuzzle(rocky, tutorialCodeDoor));
@@ -166,7 +210,7 @@ public class WorldFactory {
 		List<Door> doors = Arrays.asList(codeDoorOpen);
 		
 		List<Button> buttons = new ArrayList<>();
-		buttons.add(new Button(new Point(-400, 400), 50, ()->System.out.println("Boop"), rocky));
+		buttons.add(new Button(new Point(-400, 400), ()->System.out.println("Boop"), rocky));
 		
 		LetterPuzzle simplePuzzle = PuzzleFactory.makeDemoLandLetterPuzzle(rocky, codeDoorOpen);
 		List<LetterPuzzle> puzzles =new ArrayList<>();

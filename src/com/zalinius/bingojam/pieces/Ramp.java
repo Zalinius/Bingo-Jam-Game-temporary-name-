@@ -13,6 +13,7 @@ import com.zalinius.zje.architecture.Graphical;
 import com.zalinius.zje.math.Interpolation;
 import com.zalinius.zje.physics.Collideable;
 import com.zalinius.zje.physics.Point;
+import com.zalinius.zje.physics.UnitVector;
 import com.zalinius.zje.physics.Vector;
 
 public class Ramp implements Collideable, Graphical, Slopable{
@@ -22,10 +23,13 @@ public class Ramp implements Collideable, Graphical, Slopable{
 	private Point bottomLeft, bottomRight, topLeft, topRight;
 	
 	public Ramp(Point center, double width, double height, Vector3 normal) {
-		this.topLeft = center.add(-width/2, -height/2);
-		this.topRight = center.add(width/2, -height/2);
-		this.bottomLeft = center.add(-width/2, height/2);
-		this.bottomRight = center.add(width/2, height/2);
+		UnitVector direction = normal.project().normalize();
+		UnitVector perp = direction.perpendicularCCW().normalize();
+		
+		this.topLeft = center.add(direction.scale(-height/2).add(perp.scale(-width/2)));
+		this.topRight = center.add(direction.scale(-height/2).add(perp.scale(width/2)));
+		this.bottomLeft = center.add(direction.scale(height/2).add(perp.scale(-width/2)));
+		this.bottomRight = center.add(direction.scale(height/2).add(perp.scale(width/2)));
 
 		this.normal = normal.normalize();
 	}

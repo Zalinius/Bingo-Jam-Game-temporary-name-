@@ -13,17 +13,23 @@ import com.zalinius.zje.physics.Point;
 public class Button implements GameObject, Collideable{
 	
 	private final Point center;
-	private final double width;
 	private final Runnable action;
 	private final Locatable player;
+	private final boolean staysPressed;
 	
 	private boolean pressed;
-	
-	public Button(Point center, double width, Runnable action, Locatable player) {
+	private final double width;
+
+	public Button(Point center, Runnable action, Locatable player) {
+		this(center, action, player, true);
+	}
+
+	public Button(Point center, Runnable action, Locatable player, boolean staysPressed) {
 		this.center = center;
-		this.width = width;
+		this.width = 50;
 		this.action = action;
 		this.player = player;
+		this.staysPressed = staysPressed;
 		
 		this.pressed = false;
 	}
@@ -34,6 +40,11 @@ public class Button implements GameObject, Collideable{
 			if(!pressed) {
 				pressed = true;
 				action.run();
+			}
+		}
+		else {
+			if(pressed && !staysPressed) {
+				pressed = false;
 			}
 		}
 
