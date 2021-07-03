@@ -51,7 +51,8 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 	private Topographical worldSurface;
 
 	public Rocky(Topographical worldSurface) {
-		this.center = new Vertex(new Point(), 5);
+		//this.center = new Vertex(new Point(0, 0), 5);
+		this.center = new Vertex(new Point(-3500, -2100), 5);//TODO RESET
 		this.respawnPoint = center.position();
 		this.radius = 50;
 		this.orientation = new Quaternion();
@@ -156,7 +157,23 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 				return KeyEvent.VK_SPACE;
 			}
 		});
-		
+
+		inputs.add(new Inputtable() {
+			
+			@Override
+			public void released() {/*Do nothing*/}
+			
+			@Override
+			public void pressed() {
+				respawn();
+			}
+			
+			@Override
+			public int keyCode() {
+				return KeyEvent.VK_K;
+			}
+		});
+
 		return inputs;
 	}
 

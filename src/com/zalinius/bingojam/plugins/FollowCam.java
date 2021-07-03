@@ -16,7 +16,7 @@ public class FollowCam extends RuntimePlugin implements Locatable{
 	private Locatable target;
 
 	public FollowCam(Locatable target) {
-		cameraInterpolation = new Point();
+		cameraInterpolation = target.position();
 		this.target = target;
 	}
 

@@ -22,4 +22,8 @@ public class Palette {
 	
 	public static final Stroke THIN = new BasicStroke(2.5f);
 	public static final Stroke THICK = new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	
+	public static final Color RED = new Color(0.6f, 0.2f, 0.2f);
+	public static final Color GREEN = new Color(0.2f, 0.6f, 0.2f);
+	public static final Color BLUE = new Color(0.2f, 0.2f, 0.6f);
 }

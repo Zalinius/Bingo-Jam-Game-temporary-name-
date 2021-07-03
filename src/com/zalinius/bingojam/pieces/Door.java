@@ -1,6 +1,7 @@
 package com.zalinius.bingojam.pieces;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
@@ -14,17 +15,28 @@ public class Door implements Graphical, CollideableLine{
 	private Point p1;
 	private Point p2;
 	private boolean open;
+	private Color color;
 
 	public Door(Point p1, Point p2) {
 		this.p1 = p1;
 		this.p2 = p2;
 		this.open = false;
+		this.color = Palette.DOOR;
 	}
+	
+	public Door(Point p1, Point p2, Color color) {
+		this.p1 = p1;
+		this.p2 = p2;
+		this.open = false;
+		this.color = color;
+	}
+
+
 
 	@Override
 	public void render(Graphics2D g) {
 		g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-		g.setColor(Palette.DOOR);
+		g.setColor(color);
 
 		if(open) {
 			Line2D.Double line1 = new Line2D.Double(p1.point2D(), Interpolation.linearInterpolation(p1, p2, 0.05).point2D());
