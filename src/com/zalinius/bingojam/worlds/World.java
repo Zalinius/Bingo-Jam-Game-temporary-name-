@@ -17,6 +17,7 @@ import com.zalinius.bingojam.pieces.Pitfall;
 import com.zalinius.bingojam.pieces.Ramp;
 import com.zalinius.bingojam.pieces.RespawnPoint;
 import com.zalinius.bingojam.pieces.Slopable;
+import com.zalinius.bingojam.pieces.TextSpot;
 import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
@@ -43,6 +44,8 @@ public class World implements GameObject, Topographical{
 	private Collection<Pitfall> pitfalls;
 	
 	private Collection<LetterPuzzle> puzzles;
+	
+	private Collection<TextSpot> texts;
 
 
 	public void setRocky(Rocky rocky) {
@@ -83,6 +86,10 @@ public class World implements GameObject, Topographical{
 
 	public void setPuzzles(Collection<LetterPuzzle> puzzles) {
 		this.puzzles = puzzles;
+	}
+	
+	public void setText(Collection<TextSpot> texts) {
+		this.texts = texts;
 	}
 
 	@Override
@@ -127,6 +134,7 @@ public class World implements GameObject, Topographical{
 		barrelPlates.forEach(plate -> plate.render(g));
 		barrels.forEach(barrel -> barrel.render(g));
 		walls.forEach(wall -> wall.render(g));
+		texts.forEach(text -> text.render(g));
 
 		rocky.render(g);
 	}
