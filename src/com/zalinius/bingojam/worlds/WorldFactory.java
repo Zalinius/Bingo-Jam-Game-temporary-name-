@@ -78,13 +78,17 @@ public class WorldFactory {
 		walls.addAll(octogonalRoom());
 		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, MAIN_ROOM_RADIUS + 400), 400 , 800)));
 		
+		//Red Wing
+		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(-MAIN_ROOM_RADIUS-400, 0), 800, 200)));
+		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-5300, -2100), 600), 200, Direction.EAST, Direction.WEST));
+		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(new Point(-5800, -2100), 400, 200)));
+		
 		//Green Wing
 		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, -MAIN_ROOM_RADIUS - 400), 200, 800)));
 		walls.add(new Wall(new Point(-3500, -3100), new Point(-3600, -3100), 1));
 		walls.add(new Wall(new Point(-3500, -3300), new Point(-3400, -3300), 1));
 		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-3500, -4200), 1200), 200, Direction.NORTH, Direction.SOUTH));
 		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(new Point(-3500, -5200), 200, 800)));
-		
 		walls.add(new Wall(new Point(-3600, -3600), new Point(-3600, -3800)));
 		walls.add(new Wall(new Point(-3200, -3800), new Point(-3700, -3800)));
 		walls.add(new Wall(new Point(-3300, -3800), new Point(-3300, -3700)));
@@ -126,8 +130,6 @@ public class WorldFactory {
 		walls.add(new Wall(new Point(-3300, -4600), new Point(-3100, -4600)));
 		walls.add(new Wall(new Point(-3100, -4700), new Point(-3100, -4600)));
 		walls.add(new Wall(new Point(-3200, -4700), new Point(-3200, -4800)));
-
-		
 		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-3500, -5800), 400), 200, Direction.SOUTH));
 
 		//Blue Wing
@@ -189,6 +191,7 @@ public class WorldFactory {
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(0, 0)) ); //initial respawn point
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(0, -900), 200));
 		respawnPoints.add(buildRespawnPoint(rocky, MAIN_ROOM, octogonalShape())); //main room
+		respawnPoints.add(buildRespawnPoint(rocky, new Point(-4900, -2100), 200)); //red wing start
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(-1500, -1100), 200)); //blue wing start
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(-3500, -3500), 200)); //green wing start
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(-3500, -4200), 200)); //green wing middle
@@ -200,12 +203,18 @@ public class WorldFactory {
 		doors.add(tutorialCodeDoor);
 		Door tutorialButtonDoor = new Door(new Point(-100, -2750), new Point(100, -2750));
 		doors.add(tutorialButtonDoor);
+		
+		//Main Doors
 		Door redDoor = redDoor();
 		doors.add(redDoor);
 		Door greenDoor = greenDoor();
 		doors.add(greenDoor);
 		Door blueDoor = blueDoor();
 		doors.add(blueDoor);
+		
+		//red doors
+		Door firstBarrelDoor = new Door(new Point(-5650, -2000), new Point(-5650, -2200), Palette.RED);
+		doors.add(firstBarrelDoor);
 		
 		//green doors
 		Door mazeDoor = new Door(new Point(-3600, -4850), new Point(-3400, -4850), Palette.GREEN);
@@ -223,28 +232,37 @@ public class WorldFactory {
 		Door lowerRightDoor = new Door(new Point(-1300, 400), new Point(-1100, 400), Palette.BLUE);
 		doors.add(lowerRightDoor);
 		
-		List<Button> buttons = new ArrayList<>();
-		buttons.add(new Button(new Point(700, -2300), ()-> tutorialButtonDoor.open(), rocky));
-
-		buttons.add(new Button(new Point(-3500, -4200), () -> mazeDoor.open(), rocky));
-
-		buttons.add(new Button(new Point(-1800, -600), ()-> {leftDoor.close(); middleDoor.open(); rightDoor.open();}, rocky, false));
-		buttons.add(new Button(new Point(-1500, -800), ()-> {leftDoor.open(); middleDoor.close(); rightDoor.open();}, rocky, false));
-		buttons.add(new Button(new Point(-1200, -600), ()-> {leftDoor.open(); middleDoor.open(); rightDoor.close();}, rocky, false));
-		buttons.add(new Button(new Point(-1500, -300), ()-> {lowerLeftDoor.open(); lowerRightDoor.close();}, rocky, false));
-		buttons.add(new Button(new Point(-1500,  300), ()-> {lowerLeftDoor.close(); lowerRightDoor.open();}, rocky, false));
-		
 		
 		List<LetterPuzzle> puzzles =new ArrayList<>();
 		puzzles.add(tutorialLetterPuzzle(rocky, tutorialCodeDoor));
 		puzzles.add(mainLetterPuzzle(rocky, redDoor, greenDoor, blueDoor));
 		
 		List<Barrel> barrels = new ArrayList<>();
+		Barrel firstBarrel = new Barrel(new Point(-5300, -2250), world);
+		barrels.add(firstBarrel);
+		
 		List<BarrelPlate> plates = new ArrayList<>();
+		plates.add(new BarrelPlate(new Point(-5300, -1900), () -> firstBarrelDoor.open(), () -> firstBarrelDoor.close()));
+		
+		
+		List<Button> buttons = new ArrayList<>();
+		buttons.add(new Button(new Point(700, -2300), ()-> tutorialButtonDoor.open(), rocky, Palette.GRAY_BACKGROUND));
+		//Red Wing	
+		buttons.add(new Button(new Point(-5100, -2300), () -> firstBarrel.reset(), rocky, Palette.RED_BACKGROUND, false));
+		//Green wing
+		buttons.add(new Button(new Point(-3500, -4200), () -> mazeDoor.open(), rocky, Palette.GREEN_BACKGROUND, false));
+		//Blue Wing
+		buttons.add(new Button(new Point(-1800, -600), ()-> {leftDoor.close(); middleDoor.open(); rightDoor.open();}, rocky, Palette.BLUE_BACKGROUND, false));
+		buttons.add(new Button(new Point(-1500, -800), ()-> {leftDoor.open(); middleDoor.close(); rightDoor.open();}, rocky, Palette.BLUE_BACKGROUND, false));
+		buttons.add(new Button(new Point(-1200, -600), ()-> {leftDoor.open(); middleDoor.open(); rightDoor.close();}, rocky, Palette.BLUE_BACKGROUND, false));
+		buttons.add(new Button(new Point(-1500, -300), ()-> {lowerLeftDoor.open(); lowerRightDoor.close();}, rocky, Palette.BLUE_BACKGROUND, false));
+		buttons.add(new Button(new Point(-1500,  300), ()-> {lowerLeftDoor.close(); lowerRightDoor.open();}, rocky, Palette.BLUE_BACKGROUND, false));
 		
 		List<TextSpot> texts = new ArrayList<>();
 		texts.add(new TextSpot(new Point(-3500, -5800), GREEN_CODE));
 		texts.add(new TextSpot(new Point(-1500, 1600), BLUE_CODE));
+		
+		
 
 		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, buttons, texts);
 
@@ -297,15 +315,15 @@ public class WorldFactory {
 		List<Door> doors = Arrays.asList(codeDoorOpen);
 		
 		List<Button> buttons = new ArrayList<>();
-		buttons.add(new Button(new Point(-400, 400), ()->System.out.println("Boop"), rocky));
+		buttons.add(new Button(new Point(-400, 400), ()->System.out.println("Boop"), rocky, Palette.GRAY_BACKGROUND));
 		
 		LetterPuzzle simplePuzzle = PuzzleFactory.makeDemoLandLetterPuzzle(rocky, codeDoorOpen);
 		List<LetterPuzzle> puzzles =new ArrayList<>();
 		puzzles.add(simplePuzzle);
 
 
-		List<Barrel> barrels = Arrays.asList(new Barrel(new Point(100, 100), 25, world), new Barrel(new Point(425, -150), 25, world), new Barrel(new Point(500, -150), 25, world));
-		List<BarrelPlate> plates = Arrays.asList(new BarrelPlate(new Point(450, -250), 75));
+		List<Barrel> barrels = Arrays.asList(new Barrel(new Point(100, 100), world), new Barrel(new Point(425, -150), world), new Barrel(new Point(500, -150), world));
+		List<BarrelPlate> plates = Arrays.asList(new BarrelPlate(new Point(450, -250), ()-> System.out.println("beep"), () -> System.out.println("boop")));
 
 		List<TextSpot> texts = new ArrayList<>();
 		

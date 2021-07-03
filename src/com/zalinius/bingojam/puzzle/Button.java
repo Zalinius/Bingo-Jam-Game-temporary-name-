@@ -1,5 +1,6 @@
 package com.zalinius.bingojam.puzzle;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 
@@ -16,20 +17,22 @@ public class Button implements GameObject, Collideable{
 	private final Runnable action;
 	private final Locatable player;
 	private final boolean staysPressed;
+	private final Color color;
 	
 	private boolean pressed;
 	private final double width;
 
-	public Button(Point center, Runnable action, Locatable player) {
-		this(center, action, player, true);
+	public Button(Point center, Runnable action, Locatable player, Color color) {
+		this(center, action, player, color, true);
 	}
 
-	public Button(Point center, Runnable action, Locatable player, boolean staysPressed) {
+	public Button(Point center, Runnable action, Locatable player, Color color, boolean staysPressed) {
 		this.center = center;
 		this.width = 50;
 		this.action = action;
 		this.player = player;
 		this.staysPressed = staysPressed;
+		this.color = color;
 		
 		this.pressed = false;
 	}
@@ -52,12 +55,12 @@ public class Button implements GameObject, Collideable{
 	
 	@Override
 	public void render(Graphics2D g) {
-		g.setColor(Palette.DOOR);
+		g.setColor(color);
 		g.fill(shape());
 		g.setColor(Palette.GROUND);
 		g.fill(Geometry.centeredCircle(center, width * .75));
 		if(pressed) {
-			g.setColor(Palette.DOOR);
+			g.setColor(color);
 			g.fill(Geometry.centeredCircle(center, width * .5));
 		}
 	}

@@ -108,6 +108,7 @@ public class World implements GameObject, Topographical{
 		buttons.forEach(button -> button.update(delta));
 		respawnPoints.forEach(res -> res.update(delta));
 		barrels.forEach(barrel -> barrel.update(delta));
+		barrelPlates.forEach(barrelPlate -> barrelPlate.update(delta));
 
 		for (Iterator<BarrelPlate> itPlate = barrelPlates.iterator(); itPlate.hasNext();) {
 			BarrelPlate pressurePlate = itPlate.next();

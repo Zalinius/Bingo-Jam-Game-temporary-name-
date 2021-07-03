@@ -39,16 +39,20 @@ public class Barrel implements GameObject, Collideable, Kinetic{
 	private double radius;
 	private double friction;
 	private double bouncyness;
-
 	private Topographical worldSurface;
+	
+	private Point originalPosition;
+	
+	private final double mass = 10;
 
-	public Barrel(Point center, double radius, Topographical worldSurface) {
-		this.center = new Vertex(center, 10);
-		this.radius = radius;
+	public Barrel(Point center, Topographical worldSurface) {
+		this.center = new Vertex(center, mass);
+		this.radius = 25;
 		this.friction = .2;
 		this.bouncyness = 0.5;
-
 		this.worldSurface = worldSurface;
+		
+		this.originalPosition = center;
 	}
 
 	@Override
@@ -102,7 +106,7 @@ public class Barrel implements GameObject, Collideable, Kinetic{
 
 	@Override
 	public void render(Graphics2D g) {
-		g.setColor(Palette.BARREL);
+		g.setColor(Palette.RED);
 		g.draw(shape());
 	}
 
@@ -182,6 +186,9 @@ public class Barrel implements GameObject, Collideable, Kinetic{
 	}
 
 
+	public void reset() {
+		this.center = new Vertex(originalPosition, mass);
+	}
 
 
 }
