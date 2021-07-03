@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.zalinius.bingojam.Rocky;
 import com.zalinius.bingojam.physics.Vector3;
@@ -81,9 +82,10 @@ public class WorldFactory {
 
 		List<Ramp> ramps = new ArrayList<>();
 		ramps.add(new Ramp(new Point(0, -600), 200, 400, new Vector3(0, 1, -2)));
-		walls.add(new Wall(new Point(-100, -800), new Point(100, -800), true));
 		ramps.add(new Ramp(new Point(-2700, -2800), new Point(-2800, -2900), new Point(-2950, -2550), new Point(-3050, -2650), 1));
-		walls.add(new Wall(new Point(-2950, -2550), new Point(-3050, -2650), true));
+
+		//get all the ramp end one way walls
+		walls.addAll(ramps.stream().map((ramp) -> ramp.getOneWayWall()).collect(Collectors.toList()));
 		
 		List<RespawnPoint> respawnPoints = new ArrayList<>();
 		respawnPoints.add(buildRespawnPoint(rocky, new Point(0, 0)) ); //initial respawn point

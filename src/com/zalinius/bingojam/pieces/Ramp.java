@@ -69,4 +69,7 @@ public class Ramp implements Collideable, Graphical, Slopable{
 		}
 	}
 	
+	public Wall getOneWayWall() {
+		return new Wall(topLeft, topRight, true);
+	}
 }
