@@ -56,7 +56,7 @@ public class WorldFactory {
 		pitfalls.add(new Pitfall(new Point(0, -1200), 400));
 
 		List<Ramp> ramps = new ArrayList<>();
-		ramps.add(new Ramp(new Point(0, -600), 200, 400, new Vector3(0, 1, -5)));
+		ramps.add(new Ramp(new Point(0, -600), 200, 400, new Vector3(0, 1, -2)));
 		walls.add(new Wall(new Point(-100, -800), new Point(100, -800), true));
 		
 		List<RespawnPoint> respawnPoints = new ArrayList<>();

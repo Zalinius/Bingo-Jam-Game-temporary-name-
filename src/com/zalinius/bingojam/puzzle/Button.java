@@ -31,12 +31,12 @@ public class Button implements GameObject, Collideable{
 	@Override
 	public void update(double delta) {
 		if(shape().contains(player.position().point2D())) {
-			pressed = true;
-			action.run();
+			if(!pressed) {
+				pressed = true;
+				action.run();
+			}
 		}
-		else {
-			pressed = false;
-		}
+
 	}
 	
 	@Override
