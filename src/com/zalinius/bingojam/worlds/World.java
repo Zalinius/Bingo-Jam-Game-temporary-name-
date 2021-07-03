@@ -22,6 +22,7 @@ import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
+import com.zalinius.bingojam.puzzle.PlateAnd;
 import com.zalinius.bingojam.puzzle.BarrelPlate;
 import com.zalinius.bingojam.puzzle.Button;
 import com.zalinius.zje.architecture.GameObject;
@@ -39,6 +40,7 @@ public class World implements GameObject, Topographical{
 	
 	private Collection<Barrel> barrels;
 	private Collection<BarrelPlate> barrelPlates;
+	private Collection<PlateAnd> plateAnds;
 	
 	private Collection<Ramp> ramps;
 	private Collection<Pitfall> pitfalls;
@@ -76,6 +78,10 @@ public class World implements GameObject, Topographical{
 		this.barrelPlates = barrelPlates;
 	}
 
+	public void setPlateAnds(Collection<PlateAnd> plateAnds) {
+		this.plateAnds = plateAnds;
+	}
+
 	public void setRamps(Collection<Ramp> ramps) {
 		this.ramps = ramps;
 	}
@@ -109,7 +115,8 @@ public class World implements GameObject, Topographical{
 		respawnPoints.forEach(res -> res.update(delta));
 		barrels.forEach(barrel -> barrel.update(delta));
 		barrelPlates.forEach(barrelPlate -> barrelPlate.update(delta));
-
+		plateAnds.forEach(plateAnd -> plateAnd.update(delta));
+		
 		for (Iterator<BarrelPlate> itPlate = barrelPlates.iterator(); itPlate.hasNext();) {
 			BarrelPlate pressurePlate = itPlate.next();
 			boolean pressurePlatePressed = false;

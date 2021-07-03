@@ -26,6 +26,7 @@ import com.zalinius.bingojam.puzzle.BarrelPlate;
 import com.zalinius.bingojam.puzzle.Button;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
 import com.zalinius.bingojam.puzzle.LetterTile;
+import com.zalinius.bingojam.puzzle.PlateAnd;
 import com.zalinius.bingojam.puzzle.PuzzleFactory;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.bingojam.utilities.Geometry;
@@ -82,6 +83,9 @@ public class WorldFactory {
 		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(-MAIN_ROOM_RADIUS-400, 0), 800, 200)));
 		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-5300, -2100), 600), 200, Direction.EAST, Direction.WEST));
 		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(new Point(-5800, -2100), 400, 200)));
+		walls.addAll(buildAllWithSlits(Geometry.centeredSquare(new Point(-6400, -2100), 800), 200, Direction.EAST, Direction.WEST));
+		walls.add(new Wall(new Point(-6200, -2000), new Point(-6000, -2000)));
+		walls.add(new Wall(new Point(-6600, -2000), new Point(-6800, -2000)));
 		
 		//Green Wing
 		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, -MAIN_ROOM_RADIUS - 400), 200, 800)));
@@ -215,6 +219,10 @@ public class WorldFactory {
 		//red doors
 		Door firstBarrelDoor = new Door(new Point(-5650, -2000), new Point(-5650, -2200), Palette.RED);
 		doors.add(firstBarrelDoor);
+		Door secondBarrelSideDoor = new Door(new Point(-6200, -2000), new Point(-6600, -2000), Palette.RED);
+		doors.add(secondBarrelSideDoor);
+		Door secondBarrelDoor = new Door(new Point(-6800, -2000), new Point(-6800, -2200), Palette.RED);
+		doors.add(secondBarrelDoor);
 		
 		//green doors
 		Door mazeDoor = new Door(new Point(-3600, -4850), new Point(-3400, -4850), Palette.GREEN);
@@ -240,15 +248,26 @@ public class WorldFactory {
 		List<Barrel> barrels = new ArrayList<>();
 		Barrel firstBarrel = new Barrel(new Point(-5300, -2250), world);
 		barrels.add(firstBarrel);
+		List<Barrel> secondBarrels = new ArrayList<>();
+		secondBarrels.add(new Barrel(new Point(-6400, -2400), world));
+		secondBarrels.add(new Barrel(new Point(-6400, -1850), world));
+		barrels.addAll(secondBarrels);
 		
 		List<BarrelPlate> plates = new ArrayList<>();
 		plates.add(new BarrelPlate(new Point(-5300, -1900), () -> firstBarrelDoor.open(), () -> firstBarrelDoor.close()));
-		
+	
+		List<BarrelPlate> secondRoomPlates = new ArrayList<>();
+		secondRoomPlates.add(new BarrelPlate(new Point(-6700, -2400), () -> secondBarrelSideDoor.open(), () -> secondBarrelSideDoor.close()));
+		secondRoomPlates.add(new BarrelPlate(new Point(-6700, -1850),	noAction(), noAction()));
+		plates.addAll(secondRoomPlates);
+		List<PlateAnd> plateAnds = new ArrayList<>();
+		plateAnds.add(new PlateAnd(secondRoomPlates, () -> secondBarrelDoor.open(), () -> secondBarrelDoor.close()));
 		
 		List<Button> buttons = new ArrayList<>();
 		buttons.add(new Button(new Point(700, -2300), ()-> tutorialButtonDoor.open(), rocky, Palette.GRAY_BACKGROUND));
 		//Red Wing	
 		buttons.add(new Button(new Point(-5100, -2300), () -> firstBarrel.reset(), rocky, Palette.RED_BACKGROUND, false));
+		buttons.add(new Button(new Point(-6100, -2400), () -> secondBarrels.forEach(b -> b.reset()), rocky, Palette.RED_BACKGROUND, false));
 		//Green wing
 		buttons.add(new Button(new Point(-3500, -4200), () -> mazeDoor.open(), rocky, Palette.GREEN_BACKGROUND, false));
 		//Blue Wing
@@ -264,7 +283,7 @@ public class WorldFactory {
 		
 		
 
-		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, buttons, texts);
+		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts);
 
 		return world;		
 	}
@@ -324,10 +343,11 @@ public class WorldFactory {
 
 		List<Barrel> barrels = Arrays.asList(new Barrel(new Point(100, 100), world), new Barrel(new Point(425, -150), world), new Barrel(new Point(500, -150), world));
 		List<BarrelPlate> plates = Arrays.asList(new BarrelPlate(new Point(450, -250), ()-> System.out.println("beep"), () -> System.out.println("boop")));
-
+		List<PlateAnd> plateAnds = new ArrayList<>();
+		
 		List<TextSpot> texts = new ArrayList<>();
 		
-		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, buttons, texts);
+		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts);
 
 		return world;		
 	}
@@ -492,10 +512,15 @@ public class WorldFactory {
 		Runnable setRespawn = () -> rocky.setRespawn(respawnPoint);
 		return new RespawnPoint(respawnTrigger, rocky, setRespawn);
 	}
-
+	
+	private static Runnable noAction() {
+		return () -> {/*no action */};
+	}
+	
 	private static void attachWorld(World world, Rocky rocky, List<Wall> walls, List<Pitfall> pitfalls, List<Ramp> ramps,
 									List<RespawnPoint> respawnPoints, List<Door> doors, List<LetterPuzzle> puzzle,
-									List<Barrel> barrels, List<BarrelPlate> plates, List<Button> buttons, List<TextSpot> texts) {
+									List<Barrel> barrels, List<BarrelPlate> plates, List<PlateAnd> plateAnds,
+									List<Button> buttons, List<TextSpot> texts) {
 		world.setRocky(rocky);
 		world.setWalls(walls);
 		world.setPitfalls(pitfalls);
@@ -505,6 +530,7 @@ public class WorldFactory {
 		world.setPuzzles(puzzle);
 		world.setBarrels(barrels);
 		world.setBarrelPlates(plates);
+		world.setPlateAnds(plateAnds);
 		world.setButtons(buttons);
 		world.setText(texts);
 	}
