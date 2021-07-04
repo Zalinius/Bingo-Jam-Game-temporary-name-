@@ -1,50 +1,53 @@
 package com.zalinius.bingojam.pieces;
 
-import java.awt.BasicStroke;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 import com.zalinius.bingojam.physics.Vector3;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.architecture.Graphical;
+import com.zalinius.zje.math.Interpolation;
 import com.zalinius.zje.physics.Collideable;
 import com.zalinius.zje.physics.Point;
+import com.zalinius.zje.physics.UnitVector;
 import com.zalinius.zje.physics.Vector;
 
 public class Ramp implements Collideable, Graphical, Slopable{
 	
-	private Point center;
-	private double width, height;
 	private Vector3 normal;
 	
-	public Ramp(Point center, double width, double height) {
-		this.center = center;
-		this.width = width;
-		this.height = height;
-		this.normal = new Vector3(1, 0, -5).normalize();
-	}
+	private Point bottomLeft, bottomRight, topLeft, topRight;
 	
+	public Ramp(Point center, double width, double height, Vector3 normal) {
+		UnitVector direction = normal.project().normalize();
+		UnitVector perp = direction.perpendicularCCW().normalize();
+		
+		this.topLeft = center.add(direction.scale(-height/2).add(perp.scale(-width/2)));
+		this.topRight = center.add(direction.scale(-height/2).add(perp.scale(width/2)));
+		this.bottomLeft = center.add(direction.scale(height/2).add(perp.scale(-width/2)));
+		this.bottomRight = center.add(direction.scale(height/2).add(perp.scale(width/2)));
+
+		this.normal = normal.normalize();
+	}
+		
+	public Ramp(Point bottomLeft, Point bottomRight, Point topLeft, Point topRight, double elevation) {
+		this.normal = new Vector3(new Vector(topLeft, bottomLeft).normalize(), -elevation).normalize();
+		this.bottomLeft = bottomLeft;
+		this.bottomRight = bottomRight;
+		this.topLeft = topLeft;
+		this.topRight = topRight;
+	}
+
+
+
 	@Override
 	public void render(Graphics2D g) {
-		g.setColor(Palette.BRIGHT);
-		g.setStroke(new BasicStroke(5));
-	//	g.draw(shape());
-		
-		Vector direction = normal.project().normalize();
-		Point2D lowPoint;
-		Point2D highPoint;
-		if(direction.x == 0) {
-			lowPoint = center.add(direction.scale(height/2)).point2D();
-			highPoint = center.add(direction.scale(-height/2)).point2D();
-		}
-		else {
-			lowPoint = center.add(direction.scale(width/2)).point2D();
-			highPoint = center.add(direction.scale(-width/2)).point2D();			
-		}
+		Point2D lowPoint = Interpolation.linearInterpolation(bottomLeft, bottomRight, 0.5).point2D();
+		Point2D highPoint =Interpolation.linearInterpolation(topLeft, topRight, 0.5).point2D();
 		Paint gradient = new GradientPaint(lowPoint, Palette.GROUND, highPoint, Palette.BRIGHT);
 		g.setPaint(gradient);
 		g.fill(shape());
@@ -52,7 +55,13 @@ public class Ramp implements Collideable, Graphical, Slopable{
 
 	@Override
 	public Shape shape() {
-		return new Rectangle2D.Double(center.x - width/2 , center.y - height / 2, width, height);
+		Path2D.Double shape = new Path2D.Double();
+		shape.moveTo(bottomLeft.x, bottomLeft.y);
+		shape.lineTo(topLeft.x, topLeft.y);
+		shape.lineTo(topRight.x, topRight.y);
+		shape.lineTo(bottomRight.x, bottomRight.y);
+		shape.closePath();
+		return shape;
 	}
 	
 	public Vector3 getNormalForSphere(Point point, double radius) {
@@ -62,5 +71,9 @@ public class Ramp implements Collideable, Graphical, Slopable{
 		else {
 			return Vector3.OUT;
 		}
+	}
+	
+	public Wall getOneWayWall() {
+		return new Wall(topLeft, topRight, true);
 	}
 }

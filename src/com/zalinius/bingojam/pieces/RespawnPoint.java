@@ -29,6 +29,7 @@ public class RespawnPoint implements GameObject{
 
 	@Override
 	public void render(Graphics2D g) {
+		g.setStroke(Palette.THIN);
 		g.setColor(Palette.DEBUG);
 		g.draw(respawnAreaTrigger);
 	}

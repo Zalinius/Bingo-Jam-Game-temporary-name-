@@ -1,6 +1,5 @@
 package com.zalinius.bingojam.pieces;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
@@ -55,7 +54,7 @@ public class Wall implements CollideableLine {
 			g.draw(arrow);
 		}
 		
-		g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		g.setStroke(Palette.THICK);
 		g.setColor(computeBouncynessColor());
 		g.draw(line());	
 
@@ -74,9 +73,9 @@ public class Wall implements CollideableLine {
 	}
 	
 	private Color computeBouncynessColor() {
-		int r = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getRed(), Palette.BOUNCE.getRed(), bouncyness);
-		int g = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getGreen(), Palette.BOUNCE.getGreen(), bouncyness);
-		int b = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getBlue(), Palette.BOUNCE.getBlue(), bouncyness);
+		int r = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getRed(), Palette.GREEN.getRed(), bouncyness);
+		int g = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getGreen(), Palette.GREEN.getGreen(), bouncyness);
+		int b = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getBlue(), Palette.GREEN.getBlue(), bouncyness);
 		return new Color(r, g, b);
 	}
 

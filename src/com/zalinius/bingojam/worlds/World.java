@@ -2,12 +2,16 @@ package com.zalinius.bingojam.worlds;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.zalinius.bingojam.ChangingBackgroundColor;
 import com.zalinius.bingojam.Rocky;
+import com.zalinius.bingojam.RunicLine;
+import com.zalinius.bingojam.audio.MusicTrack;
 import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.physics.Kinetic;
 import com.zalinius.bingojam.physics.Topographical;
@@ -17,15 +21,21 @@ import com.zalinius.bingojam.pieces.Pitfall;
 import com.zalinius.bingojam.pieces.Ramp;
 import com.zalinius.bingojam.pieces.RespawnPoint;
 import com.zalinius.bingojam.pieces.Slopable;
+import com.zalinius.bingojam.pieces.TextSpot;
 import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
+import com.zalinius.bingojam.puzzle.BarrelPlate;
+import com.zalinius.bingojam.puzzle.Button;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
-import com.zalinius.bingojam.puzzle.PressurePlate;
+import com.zalinius.bingojam.puzzle.PlateAnd;
+import com.zalinius.bingojam.resources.Palette;
+import com.zalinius.bingojam.utilities.Geometry;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Point;
+import com.zalinius.zje.plugins.AbstractPlugin;
 
 public class World implements GameObject, Topographical{
 
@@ -33,12 +43,38 @@ public class World implements GameObject, Topographical{
 	private Collection<Wall> walls;
 	private Collection<RespawnPoint> respawnPoints;
 	private Collection<Door> doors;
+	private Collection<Button> buttons;
+	
 	private Collection<Barrel> barrels;
-	private Collection<PressurePlate> plates;
+	private Collection<BarrelPlate> barrelPlates;
+	private Collection<PlateAnd> plateAnds;
+	
 	private Collection<Ramp> ramps;
 	private Collection<Pitfall> pitfalls;
+	
 	private Collection<LetterPuzzle> puzzles;
+	
+	private Collection<TextSpot> texts;
+	private List<RunicLine> lines;//because order matter
+	private List<RunicLine> decor; //drawn last
+	
+	private Rectangle2D.Double redZone;
+	private Rectangle2D.Double greenZone;
+	private Rectangle2D.Double blueZone;
 
+	private MusicTrack music;
+	
+	public World() {
+		music = new MusicTrack(this);
+		
+		redZone = Geometry.centeredRectangle(new Point(-6800, -2100), 5200, 1600);
+		greenZone = Geometry.centeredRectangle(new Point(-3500, -4400), 1200, 3200);
+		blueZone = new Rectangle2D.Double(-2800, -2200, 1700, 4000);
+	}
+	
+	public void startMusic() {
+		music.start();
+	}
 
 	public void setRocky(Rocky rocky) {
 		this.rocky = rocky;
@@ -56,12 +92,20 @@ public class World implements GameObject, Topographical{
 		this.doors = doors;
 	}
 
+	public void setButtons(Collection<Button> buttons) {
+		this.buttons = buttons;
+	}
+
 	public void setBarrels(Collection<Barrel> barrels) {
 		this.barrels = barrels;
 	}
 
-	public void setPlates(Collection<PressurePlate> plates) {
-		this.plates = plates;
+	public void setBarrelPlates(Collection<BarrelPlate> barrelPlates) {
+		this.barrelPlates = barrelPlates;
+	}
+
+	public void setPlateAnds(Collection<PlateAnd> plateAnds) {
+		this.plateAnds = plateAnds;
 	}
 
 	public void setRamps(Collection<Ramp> ramps) {
@@ -74,6 +118,17 @@ public class World implements GameObject, Topographical{
 
 	public void setPuzzles(Collection<LetterPuzzle> puzzles) {
 		this.puzzles = puzzles;
+	}
+	
+	public void setText(Collection<TextSpot> texts) {
+		this.texts = texts;
+	}
+	
+	public void setLines(List<RunicLine> lines) {
+		this.lines = lines;
+	}
+	public void setDecor(List<RunicLine> decor) {
+		this.decor = decor;
 	}
 
 	@Override
@@ -89,11 +144,14 @@ public class World implements GameObject, Topographical{
 		}
 
 		puzzles.forEach(puzzle -> puzzle.update(delta));
+		buttons.forEach(button -> button.update(delta));
 		respawnPoints.forEach(res -> res.update(delta));
 		barrels.forEach(barrel -> barrel.update(delta));
-
-		for (Iterator<PressurePlate> itPlate = plates.iterator(); itPlate.hasNext();) {
-			PressurePlate pressurePlate = itPlate.next();
+		barrelPlates.forEach(barrelPlate -> barrelPlate.update(delta));
+		plateAnds.forEach(plateAnd -> plateAnd.update(delta));
+		
+		for (Iterator<BarrelPlate> itPlate = barrelPlates.iterator(); itPlate.hasNext();) {
+			BarrelPlate pressurePlate = itPlate.next();
 			boolean pressurePlatePressed = false;
 			for (Iterator<Barrel> itBarrel = barrels.iterator(); itBarrel.hasNext();) {
 				Barrel barrel = itBarrel.next();
@@ -108,17 +166,26 @@ public class World implements GameObject, Topographical{
 
 	@Override
 	public void render(Graphics2D g) {
-		walls.forEach(wall -> wall.render(g));
+		lines.forEach(line -> line.render(g));
+		
 		pitfalls.forEach(pitfall -> pitfall.render(g));
 		puzzles.forEach(puzzle -> puzzle.render(g));
-		
 		ramps.forEach(ramp -> ramp.render(g));
 		respawnPoints.forEach(res -> res.render(g));
 		doors.forEach(door -> door.render(g));
-		plates.forEach(plate -> plate.render(g));
+		buttons.forEach(button -> button.render(g));
+		barrelPlates.forEach(plate -> plate.render(g));
 		barrels.forEach(barrel -> barrel.render(g));
+		walls.forEach(wall -> wall.render(g));
+		texts.forEach(text -> text.render(g));
+		decor.forEach(deco -> deco.render(g));
 
 		rocky.render(g);
+		
+		g.setColor(Palette.DEBUG);
+		g.draw(redZone);
+		g.draw(greenZone);
+		g.draw(blueZone);
 	}
 
 	public Collection<Inputtable> getKeyboardControls() {
@@ -182,6 +249,22 @@ public class World implements GameObject, Topographical{
 	@Override
 	public Kinetic getRockyKinetics() {
 		return rocky;
+	}
+
+	public AbstractPlugin getBackground(Runnable exitAction) {
+		return new ChangingBackgroundColor(Palette.GROUND, Palette.BRIGHT, rocky, exitAction);
+	}
+	
+	public boolean inRedZone() {
+		return redZone.contains(rocky.position().point2D());
+	}
+	
+	public boolean inGreenZone() {
+		return greenZone.contains(rocky.position().point2D());
+	}
+	
+	public boolean inBlueZone() {
+		return blueZone.contains(rocky.position().point2D());
 	}
 
 

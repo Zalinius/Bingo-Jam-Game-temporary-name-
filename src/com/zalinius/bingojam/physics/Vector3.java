@@ -21,11 +21,17 @@ public class Vector3 {
 		this.y = y;
 		this.z = z;
 	}
-	
+
 	public Vector3(Vector xyVector) {
 		this(xyVector.x, xyVector.y, 0);
 	}
 
+	public Vector3(Vector xyVector, double z) {
+		this(xyVector.x, xyVector.y, z);
+	}
+
+
+	
 	public double length() {
 		return Math.sqrt(x*x + y*y + z*z);
 	}

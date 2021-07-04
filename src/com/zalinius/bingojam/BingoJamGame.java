@@ -8,13 +8,11 @@ import java.util.List;
 import com.zalinius.bingojam.plugins.Axes;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.resources.FontSingleton;
-import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.bingojam.worlds.World;
 import com.zalinius.bingojam.worlds.WorldFactory;
 import com.zalinius.zje.architecture.GameContainer;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.plugins.AbstractPlugin;
-import com.zalinius.zje.plugins.BackgroundColor;
 
 public class BingoJamGame extends GameContainer{
 	public static void main(String[] args) {
@@ -26,19 +24,20 @@ public class BingoJamGame extends GameContainer{
 
 	public BingoJamGame() {
 		super("Bingo jam game (temp name)", 1000, 1000);
-		this.gameWorld = WorldFactory.demoLand();
+		this.gameWorld = WorldFactory.theWorld();
 		addControls(getControls(), null);
 		prepareResources();
+		this.gameWorld.startMusic();
 	}
 
 
 	@Override
 	public List<AbstractPlugin> getPlugins() {
 		List<AbstractPlugin> plugins = new ArrayList<>();
-		plugins.add(new BackgroundColor(Palette.GROUND));
+		plugins.add(gameWorld.getBackground(()-> exit()));
 		FollowCam cam = this.gameWorld.getFollowCamera();
 		plugins.add(cam);
-		plugins.add(new Axes(cam));
+		//plugins.add(new Axes(cam));
 		return plugins;
 	}
 
