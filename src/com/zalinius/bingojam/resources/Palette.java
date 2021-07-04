@@ -31,4 +31,15 @@ public class Palette {
 	public static final Color GREEN_BACKGROUND = GREEN.darker();
 	public static final Color BLUE_BACKGROUND = BLUE.darker();
 	public static final Color GRAY_BACKGROUND = GRAY.darker();
+
+	public static final Color RED_DEATH = RED_BACKGROUND.darker();
+	public static final Color GREEN_DEATH = GREEN_BACKGROUND.darker();
+	public static final Color BLUE_DEATH = BLUE_BACKGROUND.darker();
+
+	public static final Color RED_LIFE = Color.RED;
+	public static final Color GREEN_LIFE = Color.GREEN;
+	public static final Color BLUE_LIFE = Color.BLUE;
+
+	
+
 }

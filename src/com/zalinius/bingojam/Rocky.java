@@ -56,8 +56,8 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		//this.center = new Vertex(new Point(-3500, -2100), 5);// main room
 		//this.center = new Vertex(new Point(-4900, -2100), 5);// red wing start
 		//this.center = new Vertex(new Point(-7000, -2100), 5);// red wing room 3
-		this.center = new Vertex(new Point(-8500, -2100), 5);// red wing end
-		//this.center = new Vertex(new Point(-1500, -1100), 5);// blue wing start
+		//this.center = new Vertex(new Point(-8500, -2100), 5);// red wing end
+		this.center = new Vertex(new Point(-1500, -1100), 5);// blue wing start
 		//this.center = new Vertex(new Point(-1500, 1600), 5);// blue wing end
 		//this.center = new Vertex(new Point(-3500, -3500), 5);// green wing start
 		//this.center = new Vertex(new Point(-3500, -4200), 5);// green wing middle

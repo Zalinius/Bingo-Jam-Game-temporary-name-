@@ -43,13 +43,13 @@ public class Barrel implements GameObject, Collideable, Kinetic{
 	
 	private Point originalPosition;
 	
-	private final double mass = 10;
+	private final double mass = 2;
 
 	public Barrel(Point center, Topographical worldSurface) {
 		this.center = new Vertex(center, mass);
 		this.radius = 25;
-		this.friction = .2;
-		this.bouncyness = 0.5;
+		this.friction = .5;
+		this.bouncyness = 1;
 		this.worldSurface = worldSurface;
 		
 		this.originalPosition = center;

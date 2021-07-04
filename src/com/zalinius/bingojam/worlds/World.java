@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.zalinius.bingojam.Rocky;
+import com.zalinius.bingojam.RunicLine;
 import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.physics.Kinetic;
 import com.zalinius.bingojam.physics.Topographical;
@@ -48,6 +49,7 @@ public class World implements GameObject, Topographical{
 	private Collection<LetterPuzzle> puzzles;
 	
 	private Collection<TextSpot> texts;
+	private List<RunicLine> lines;//because order matter
 
 
 	public void setRocky(Rocky rocky) {
@@ -97,6 +99,10 @@ public class World implements GameObject, Topographical{
 	public void setText(Collection<TextSpot> texts) {
 		this.texts = texts;
 	}
+	
+	public void setLines(List<RunicLine> lines) {
+		this.lines = lines;
+	}
 
 	@Override
 	public void update(double delta) {
@@ -133,6 +139,8 @@ public class World implements GameObject, Topographical{
 
 	@Override
 	public void render(Graphics2D g) {
+		lines.forEach(line -> line.render(g));
+		
 		pitfalls.forEach(pitfall -> pitfall.render(g));
 		puzzles.forEach(puzzle -> puzzle.render(g));
 		ramps.forEach(ramp -> ramp.render(g));

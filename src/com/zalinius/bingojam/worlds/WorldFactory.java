@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.zalinius.bingojam.Rocky;
+import com.zalinius.bingojam.RunicLine;
 import com.zalinius.bingojam.physics.Vector3;
 import com.zalinius.bingojam.pieces.Door;
 import com.zalinius.bingojam.pieces.Pitfall;
@@ -39,9 +40,9 @@ public class WorldFactory {
 	private static final int   MAIN_ROOM_SIDES = 8;
 	private static final double MAIN_ROOM_RADIUS = 700;
 	
-	private static final String RED_CODE = "ZZZZ";
-	private static final String GREEN_CODE = "ZZZZ";
-	private static final String BLUE_CODE = "ZZZZ";
+	private static final String RED_CODE   = "FERA";
+	private static final String GREEN_CODE = "AROZ";
+	private static final String BLUE_CODE  = "DOEF";
 
 	public static World theWorld() {
 		World world = new World();
@@ -257,9 +258,6 @@ public class WorldFactory {
 		doors.add(lowerRightDoor);
 		
 		
-		List<LetterPuzzle> puzzles =new ArrayList<>();
-		puzzles.add(tutorialLetterPuzzle(rocky, tutorialCodeDoor));
-		puzzles.add(mainLetterPuzzle(rocky, redDoor, greenDoor, blueDoor));
 		
 		List<Barrel> barrels = new ArrayList<>();
 		Barrel firstBarrel = new Barrel(new Point(-5300, -2250), world);
@@ -318,13 +316,40 @@ public class WorldFactory {
 		buttons.add(new Button(new Point(-1500,  300), ()-> {lowerLeftDoor.close(); lowerRightDoor.open();}, rocky, Palette.BLUE_BACKGROUND, false));
 		
 		List<TextSpot> texts = new ArrayList<>();
-		texts.add(new TextSpot(new Point(-3500, -5800), GREEN_CODE));
 		texts.add(new TextSpot(new Point(-9200, -2100), RED_CODE));
+		texts.add(new TextSpot(new Point(-3500, -5800), GREEN_CODE));
 		texts.add(new TextSpot(new Point(-1500, 1600), BLUE_CODE));
 		
-				
+		List<RunicLine> lines = new ArrayList<>();
+		Path2D.Double redLine = new Path2D.Double();
+		redLine.moveTo(-9200, -2100);
+		redLine.lineTo(MAIN_ROOM.x-20, MAIN_ROOM.y);
+		redLine.lineTo(MAIN_ROOM.x-20, MAIN_ROOM.y+MAIN_ROOM_RADIUS+100);
+		RunicLine redRunicLine = new RunicLine(redLine, 20, Palette.RED_DEATH);
+		lines.add(redRunicLine);
+		
+		Path2D.Double greenLine = new Path2D.Double();
+		greenLine.moveTo(MAIN_ROOM.x, MAIN_ROOM.y+MAIN_ROOM_RADIUS+200);
+		greenLine.lineTo(-3500, -5800);
+		RunicLine greenRunicLine = new RunicLine(greenLine, 20, Palette.GREEN_DEATH);
+		lines.add(greenRunicLine);
 
-		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts);
+		Path2D.Double blueLine = new Path2D.Double();
+		blueLine.moveTo(-1500, 1600);
+		blueLine.lineTo(-1500, -1200);
+		blueLine.lineTo(-2400, -2100);
+		blueLine.lineTo(MAIN_ROOM.x+20, MAIN_ROOM.y);
+		blueLine.lineTo(MAIN_ROOM.x+20, MAIN_ROOM.y + MAIN_ROOM_RADIUS + 300);
+		//blueLine.lineTo(-3500, -5800);
+		RunicLine blueRunicLine = new RunicLine(blueLine, 20, Palette.BLUE_DEATH);
+		lines.add(blueRunicLine);
+
+		
+		List<LetterPuzzle> puzzles =new ArrayList<>();
+		puzzles.add(tutorialLetterPuzzle(rocky, tutorialCodeDoor));
+		puzzles.add(mainLetterPuzzle(rocky, redDoor, greenDoor, blueDoor, redRunicLine, greenRunicLine, blueRunicLine));
+
+		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts, lines);
 
 		return world;		
 	}
@@ -341,10 +366,9 @@ public class WorldFactory {
 		return new LetterPuzzle(tiles, actions, rocky);	
 	}
 
-	public static LetterPuzzle mainLetterPuzzle(Rocky rocky, Door redDoor, Door greenDoor, Door blueDoor) {
+	public static LetterPuzzle mainLetterPuzzle(Rocky rocky, Door redDoor, Door greenDoor, Door blueDoor, RunicLine redLine, RunicLine greenLine, RunicLine blueLine) {
 		List<LetterTile> tiles = new ArrayList<>();
-		
-		List<Character> letters = Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H');
+		List<Character> letters = Arrays.asList('R', 'F', 'D', 'L', 'E', 'Z', 'A', 'O');
 		List<Point> points = Geometry.regularPolygon(MAIN_ROOM, MAIN_ROOM_SIDES, 300);
 
 		for (int i = 0; i < letters.size(); i++) {
@@ -352,9 +376,9 @@ public class WorldFactory {
 		}
 		
 		Map<String, Runnable> actions = new HashMap<>();
-		actions.put(RED_CODE,   () -> redDoor.open());
-		actions.put(GREEN_CODE, () -> greenDoor.open());
-		actions.put(BLUE_CODE,  () -> blueDoor.open());
+		actions.put(RED_CODE,   () -> {redDoor.open();   redLine.changeColor(Palette.RED_LIFE);});
+		actions.put(GREEN_CODE, () -> {greenDoor.open(); greenLine.changeColor(Palette.GREEN_LIFE);});
+		actions.put(BLUE_CODE,  () -> {blueDoor.open();  blueLine.changeColor(Palette.BLUE_LIFE);});
 		
 		return new LetterPuzzle(tiles, actions, rocky);	
 	}
@@ -387,8 +411,9 @@ public class WorldFactory {
 		List<PlateAnd> plateAnds = new ArrayList<>();
 		
 		List<TextSpot> texts = new ArrayList<>();
-		
-		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts);
+		List<RunicLine> lines = new ArrayList<>();
+
+		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts, lines);
 
 		return world;		
 	}
@@ -561,7 +586,7 @@ public class WorldFactory {
 	private static void attachWorld(World world, Rocky rocky, List<Wall> walls, List<Pitfall> pitfalls, List<Ramp> ramps,
 									List<RespawnPoint> respawnPoints, List<Door> doors, List<LetterPuzzle> puzzle,
 									List<Barrel> barrels, List<BarrelPlate> plates, List<PlateAnd> plateAnds,
-									List<Button> buttons, List<TextSpot> texts) {
+									List<Button> buttons, List<TextSpot> texts, List<RunicLine> lines) {
 		world.setRocky(rocky);
 		world.setWalls(walls);
 		world.setPitfalls(pitfalls);
@@ -574,6 +599,7 @@ public class WorldFactory {
 		world.setPlateAnds(plateAnds);
 		world.setButtons(buttons);
 		world.setText(texts);
+		world.setLines(lines);
 	}
 
 
