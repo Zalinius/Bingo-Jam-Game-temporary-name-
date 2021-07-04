@@ -37,7 +37,7 @@ public class BingoJamGame extends GameContainer{
 		plugins.add(gameWorld.getBackground(()-> exit()));
 		FollowCam cam = this.gameWorld.getFollowCamera();
 		plugins.add(cam);
-		plugins.add(new Axes(cam));
+		//plugins.add(new Axes(cam));
 		return plugins;
 	}
 
