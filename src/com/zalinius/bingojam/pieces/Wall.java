@@ -73,9 +73,9 @@ public class Wall implements CollideableLine {
 	}
 	
 	private Color computeBouncynessColor() {
-		int r = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getRed(), Palette.BOUNCE.getRed(), bouncyness);
-		int g = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getGreen(), Palette.BOUNCE.getGreen(), bouncyness);
-		int b = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getBlue(), Palette.BOUNCE.getBlue(), bouncyness);
+		int r = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getRed(), Palette.GREEN.getRed(), bouncyness);
+		int g = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getGreen(), Palette.GREEN.getGreen(), bouncyness);
+		int b = (int) Interpolation.linearInterpolation(Palette.BRIGHT.getBlue(), Palette.GREEN.getBlue(), bouncyness);
 		return new Color(r, g, b);
 	}
 

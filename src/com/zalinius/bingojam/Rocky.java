@@ -1,6 +1,7 @@
 package com.zalinius.bingojam;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
@@ -47,6 +48,8 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 	private double bouncyness;
 	private Point respawnPoint;
 
+	private boolean youreacat;
+
 	private Vector directionOfInput;
 
 	private Topographical worldSurface;
@@ -54,8 +57,8 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 	public Rocky(Topographical worldSurface) {
 		//TODO cleanup
 		//this.center = new Vertex(new Point(0, 0), 5); //Start
-		//this.center = new Vertex(new Point(-3500, -2100), 5);// main room
-		this.center = new Vertex(new Point(-4900, -2100), 5);// red wing start
+		this.center = new Vertex(new Point(-3500, -2100), 5);// main room
+		//this.center = new Vertex(new Point(-4900, -2100), 5);// red wing start
 		//this.center = new Vertex(new Point(-7000, -2100), 5);// red wing room 3
 		//this.center = new Vertex(new Point(-8500, -2100), 5);// red wing end
 		//this.center = new Vertex(new Point(-1500, -1100), 5);// blue wing start
@@ -63,7 +66,7 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		//this.center = new Vertex(new Point(-3500, -3500), 5);// green wing start
 		//this.center = new Vertex(new Point(-3500, -4200), 5);// green wing middle
 		//this.center = new Vertex(new Point(-3500, -5800), 5);// green wing end
-		
+
 		this.respawnPoint = center.position();
 		this.radius = 45;
 		this.orientation = new Quaternion();
@@ -71,6 +74,8 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		this.acceleration = 500;
 		this.friction = .01;
 		this.bouncyness = 0.5;
+
+		this.youreacat = false;
 
 		this.worldSurface = worldSurface;
 	}
@@ -92,7 +97,7 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		}
 
 	}
-	
+
 	public Vector netForces() {
 		GravityForce3D gravityForce = new GravityForce3D(center, 500);
 		Forceful pushingForce = getPushingForce();
@@ -126,36 +131,63 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 			Vector3 point = it.next();
 			point = orientation.rotate(point);
 			if(point.z <= 0) {
-				g.setColor(Palette.FACE_SHADED);
+				if(youreacat) {
+					g.setColor(Palette.CAT_SHADED);
+					g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+				}
+				else {
+					g.setColor(Palette.FACE_SHADED);
+				}
 			}else {
-				g.setColor(Palette.FACE);
+				if(youreacat) {
+					g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+					g.setColor(Palette.CAT);
+				}
+				else {
+					g.setColor(Palette.FACE);
+				}
 			}
 			Vector projection = point.project();
 			Point spot = center.position().add(projection);
 			g.draw(new Line2D.Double(spot.point2D(), spot.point2D()));
 		}
-		{
-			Vector3 leftSmilePoint = smilePoints().get(0);
-			Vector3 bottomSmilePoint = smilePoints().get(1);
-			Vector3 rightSmilePoint = smilePoints().get(2);
-			
-			leftSmilePoint = orientation.rotate(leftSmilePoint);
-			bottomSmilePoint = orientation.rotate(bottomSmilePoint);
-			rightSmilePoint = orientation.rotate(rightSmilePoint);
-			
-			Vector leftSmileProjection = leftSmilePoint.project();
-			Vector bottomSmileProjection = bottomSmilePoint.project();
-			Vector rightSmileProjection = rightSmilePoint.project();
-			
-			Point leftSmileFinalPoint = center.position().add(leftSmileProjection);
-			Point bottomSmileFinalPoint = center.position().add(bottomSmileProjection);
-			Point rightSmileFinalPoint = center.position().add(rightSmileProjection);
-			
-			g.draw(new QuadCurve2D.Double(leftSmileFinalPoint.x, leftSmileFinalPoint.y, bottomSmileFinalPoint.x, bottomSmileFinalPoint.y, rightSmileFinalPoint.x, rightSmileFinalPoint.y));
-			//render smile
+		{	
+			List<Vector3> smilePoints;
+			if(youreacat) {
+				smilePoints = catPointsAsQuadPath();
+			}
+			else {
+				smilePoints = smilePointsAsQuadPath();
+			}
+
+			for (int i = 0; i != smilePoints.size(); i+=3) {
+				Color smileColor = null;
+				Color smileShadedColor = null;
+				if(youreacat) {
+					smileColor = Palette.CAT;
+					smileShadedColor = Palette.CAT_SHADED;
+				}
+				else {
+					smileColor = Palette.FACE;
+					smileShadedColor = Palette.FACE_SHADED;
+				}
+				g.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+				projectAndDrawQuadCurve(g, smilePoints.get(i+0), smilePoints.get(i+1), smilePoints.get(i+2), smileColor, smileShadedColor);				
+			}
+
+
+			if(youreacat) {
+				drawCatNose(g);
+			}
 		}
 
-		g.setColor(Palette.BRIGHT);
+		if(youreacat) {
+			g.setColor(Palette.CAT);
+		}
+		else {
+			g.setColor(Palette.BRIGHT);
+		}
 		g.setStroke(new BasicStroke(5));
 		g.draw(shape());
 	}
@@ -163,6 +195,7 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 	public Ellipse2D.Double shape() {
 		return new Ellipse2D.Double(center.x()-radius, center.y()-radius, 2*radius, 2*radius);
 	}	
+
 
 	//INPUT//
 	public List<Inputtable> inputs(){
@@ -174,15 +207,15 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		inputs.add(directionInput(KeyEvent.VK_D, new Vector( 1,  0)));
 
 		inputs.add(new Inputtable() {
-			
+
 			@Override
 			public void released() {/*Do nothing*/}
-			
+
 			@Override
 			public void pressed() {
 				System.out.println("(" + (int)position().x + ", " + (int)position().y + ")");				
 			}
-			
+
 			@Override
 			public int keyCode() {
 				return KeyEvent.VK_SPACE;
@@ -190,15 +223,15 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		});
 
 		inputs.add(new Inputtable() {
-			
+
 			@Override
 			public void released() {/*Do nothing*/}
-			
+
 			@Override
 			public void pressed() {
 				respawn();
 			}
-			
+
 			@Override
 			public int keyCode() {
 				return KeyEvent.VK_K;
@@ -206,6 +239,40 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		});
 
 		return inputs;
+	}
+
+	public void makeCat() {
+		this.youreacat = true;
+	}
+
+	private void projectAndDrawQuadCurve(Graphics2D g, Vector3 p0, Vector3 p1, Vector3 p2, Color lightColor, Color darkColor){
+		Vector3 pc = p1.scale(2).add(p0.scale(-0.5)).add(p2).scale(-0.5);
+
+		p0 = orientation.rotate(p0);
+		pc = orientation.rotate(p1); //TODO woops?
+		p2 = orientation.rotate(p2);
+
+		double z = (p0.z + p2.z) / 2;
+
+		Vector p0XY = p0.project();
+		Vector pCXY = pc.project();
+		Vector p2XY = p2.project();
+
+		Point p0Final = center.position().add(p0XY);
+		Point pCFinal = center.position().add(pCXY);
+		Point p2Final = center.position().add(p2XY);
+
+		QuadCurve2D.Double curve = new QuadCurve2D.Double(p0Final.x, p0Final.y, pCFinal.x, pCFinal.y, p2Final.x, p2Final.y);
+
+		if(z < 0) {
+			g.setColor(darkColor);
+		}
+		else {
+			g.setColor(lightColor);
+		}
+
+		g.draw(curve);
+
 	}
 
 	private List<Vector3> smileyFace(){
@@ -216,18 +283,51 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 
 		return points;
 	}
-	
-	private List<Vector3> smilePoints(){
+
+	//
+	private List<Vector3> smilePointsAsQuadPath(){
 		List<Vector3> points = new ArrayList<>();
 		points.add(new Vector3(-1, 1, 2).normalize().scale(radius));
-		points.add(new Vector3( 0, 2, 2).normalize().scale(radius));
-//		points.add(new Vector3(-0.5, 1.25, 2).normalize().scale(radius));
-//		points.add(new Vector3( 0, 1.35, 2).normalize().scale(radius));
-//		points.add(new Vector3(0.5, 1.25, 2).normalize().scale(radius));
+		points.add(new Vector3(-0.5, 2, 2).normalize().scale(radius));
+		points.add(new Vector3( 0, 0.9, 1).normalize().scale(radius));
+		points.add(new Vector3( 0, 0.9, 1).normalize().scale(radius));
+		points.add(new Vector3( 0.5, 2, 2).normalize().scale(radius));
 		points.add(new Vector3( 1, 1, 2).normalize().scale(radius));
 
 		return points;
 	}
+	private void drawCatNose(Graphics2D g){
+		Vector3 catNose3D = new Vector3( 0, 0, 1).normalize().scale(radius);
+		catNose3D = orientation.rotate(catNose3D);
+
+		Vector projection = catNose3D.project();
+		Point nose = center.position().add(projection);
+		g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+		if(catNose3D.z < 0) {
+			g.setColor(Color.PINK.darker());
+		}
+		else {
+			g.setColor(Color.PINK);
+		}
+		g.draw(new Line2D.Double(nose.x, nose.y, nose.x, nose.y));
+
+
+
+	}
+
+	private List<Vector3> catPointsAsQuadPath(){
+		List<Vector3> points = new ArrayList<>();
+		points.add(new Vector3(-1.2, 0.5, 2).normalize().scale(radius));
+		points.add(new Vector3(-.5, 2, 2).normalize().scale(radius));
+		points.add(new Vector3( 0, 0, 1).normalize().scale(radius));
+		points.add(new Vector3( 0, 0, 1).normalize().scale(radius));
+		points.add(new Vector3( .5, 2, 2).normalize().scale(radius));
+		points.add(new Vector3( 1.2, 0.5, 2).normalize().scale(radius));
+
+		return points;
+	}
+
 
 	private Inputtable directionInput(int key, Vector direction) {
 		return new Inputtable() {

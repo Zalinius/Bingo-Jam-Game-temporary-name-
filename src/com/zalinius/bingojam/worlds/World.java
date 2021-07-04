@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.zalinius.bingojam.ChangingBackgroundColor;
 import com.zalinius.bingojam.Rocky;
 import com.zalinius.bingojam.RunicLine;
 import com.zalinius.bingojam.physics.CollideableLine;
@@ -24,12 +25,14 @@ import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
 import com.zalinius.bingojam.puzzle.PlateAnd;
+import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.bingojam.puzzle.BarrelPlate;
 import com.zalinius.bingojam.puzzle.Button;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Point;
+import com.zalinius.zje.plugins.AbstractPlugin;
 
 public class World implements GameObject, Topographical{
 
@@ -221,6 +224,10 @@ public class World implements GameObject, Topographical{
 	@Override
 	public Kinetic getRockyKinetics() {
 		return rocky;
+	}
+
+	public AbstractPlugin getBackground(Runnable exitAction) {
+		return new ChangingBackgroundColor(Palette.GROUND, Palette.BRIGHT, rocky, exitAction);
 	}
 
 

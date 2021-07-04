@@ -41,6 +41,7 @@ public class WorldFactory {
 	private static final int   MAIN_ROOM_SIDES = 8;
 	private static final double MAIN_ROOM_RADIUS = 700;
 	
+	private static final String CAT_CODE   = "DARZ";
 	private static final String RED_CODE   = "FERA";
 	private static final String GREEN_CODE = "AROZ";
 	private static final String BLUE_CODE  = "DOEF";
@@ -79,7 +80,9 @@ public class WorldFactory {
 		
 		//Main chamber
 		walls.addAll(octogonalRoom());
-		walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, MAIN_ROOM_RADIUS + 400), 400 , 800)));
+		//walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, MAIN_ROOM_RADIUS + 400), 400 , 800)));
+		walls.add(new Wall(new Point(-3700, -1400), new Point(-3700, 12000)));
+		walls.add(new Wall(new Point(-3300, -1400), new Point(-3300, 12000)));
 		
 		//Red Wing
 		walls.addAll(eastWestCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(-MAIN_ROOM_RADIUS-400, 0), 800, 200)));
@@ -425,6 +428,7 @@ public class WorldFactory {
 		}
 		
 		Map<String, Runnable> actions = new HashMap<>();
+		actions.put(CAT_CODE,   () -> rocky.makeCat());
 		actions.put(RED_CODE,   () -> {redDoor.open();   redLine.changeColor(Palette.RED_LIFE);});
 		actions.put(GREEN_CODE, () -> {greenDoor.open(); greenLine.changeColor(Palette.GREEN_LIFE);});
 		actions.put(BLUE_CODE,  () -> {blueDoor.open();  blueLine.changeColor(Palette.BLUE_LIFE);});
