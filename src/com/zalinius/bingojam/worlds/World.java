@@ -2,6 +2,7 @@ package com.zalinius.bingojam.worlds;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import java.util.List;
 import com.zalinius.bingojam.ChangingBackgroundColor;
 import com.zalinius.bingojam.Rocky;
 import com.zalinius.bingojam.RunicLine;
+import com.zalinius.bingojam.audio.MusicTrack;
 import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.physics.Kinetic;
 import com.zalinius.bingojam.physics.Topographical;
@@ -23,11 +25,12 @@ import com.zalinius.bingojam.pieces.TextSpot;
 import com.zalinius.bingojam.pieces.Wall;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
+import com.zalinius.bingojam.puzzle.BarrelPlate;
+import com.zalinius.bingojam.puzzle.Button;
 import com.zalinius.bingojam.puzzle.LetterPuzzle;
 import com.zalinius.bingojam.puzzle.PlateAnd;
 import com.zalinius.bingojam.resources.Palette;
-import com.zalinius.bingojam.puzzle.BarrelPlate;
-import com.zalinius.bingojam.puzzle.Button;
+import com.zalinius.bingojam.utilities.Geometry;
 import com.zalinius.zje.architecture.GameObject;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.physics.Collisions;
@@ -54,7 +57,24 @@ public class World implements GameObject, Topographical{
 	private Collection<TextSpot> texts;
 	private List<RunicLine> lines;//because order matter
 	private List<RunicLine> decor; //drawn last
+	
+	private Rectangle2D.Double redZone;
+	private Rectangle2D.Double greenZone;
+	private Rectangle2D.Double blueZone;
 
+	private MusicTrack music;
+	
+	public World() {
+		music = new MusicTrack(this);
+		
+		redZone = Geometry.centeredRectangle(new Point(-6800, -2100), 5200, 1600);
+		greenZone = Geometry.centeredRectangle(new Point(-3500, -4400), 1200, 3200);
+		blueZone = new Rectangle2D.Double(-2800, -2200, 1700, 4000);
+	}
+	
+	public void startMusic() {
+		music.start();
+	}
 
 	public void setRocky(Rocky rocky) {
 		this.rocky = rocky;
@@ -161,6 +181,11 @@ public class World implements GameObject, Topographical{
 		decor.forEach(deco -> deco.render(g));
 
 		rocky.render(g);
+		
+		g.setColor(Palette.DEBUG);
+		g.draw(redZone);
+		g.draw(greenZone);
+		g.draw(blueZone);
 	}
 
 	public Collection<Inputtable> getKeyboardControls() {
@@ -228,6 +253,18 @@ public class World implements GameObject, Topographical{
 
 	public AbstractPlugin getBackground(Runnable exitAction) {
 		return new ChangingBackgroundColor(Palette.GROUND, Palette.BRIGHT, rocky, exitAction);
+	}
+	
+	public boolean inRedZone() {
+		return redZone.contains(rocky.position().point2D());
+	}
+	
+	public boolean inGreenZone() {
+		return greenZone.contains(rocky.position().point2D());
+	}
+	
+	public boolean inBlueZone() {
+		return blueZone.contains(rocky.position().point2D());
 	}
 
 

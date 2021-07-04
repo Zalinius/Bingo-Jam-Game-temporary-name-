@@ -17,7 +17,7 @@ public class Palette {
 	public static final Color GROUND = Color.DARK_GRAY.darker().darker();
 
 
-	public static final Color RED_LIFE = new Color(1, 0,0);
+	public static final Color RED_LIFE = new Color(1f, 0f, 0f);
 	public static final Color GREEN_LIFE = Color.GREEN;
 	public static final Color BLUE_LIFE = Color.BLUE;
 

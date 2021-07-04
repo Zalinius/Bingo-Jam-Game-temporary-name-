@@ -27,6 +27,7 @@ public class BingoJamGame extends GameContainer{
 		this.gameWorld = WorldFactory.theWorld();
 		addControls(getControls(), null);
 		prepareResources();
+		this.gameWorld.startMusic();
 	}
 
 
