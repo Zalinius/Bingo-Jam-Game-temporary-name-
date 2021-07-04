@@ -2,6 +2,7 @@ package com.zalinius.bingojam.worlds;
 
 import java.awt.Color;
 import java.awt.Shape;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -391,8 +392,13 @@ public class WorldFactory {
 		List<LetterPuzzle> puzzles =new ArrayList<>();
 		puzzles.add(tutorialLetterPuzzle(rocky, tutorialCodeDoor));
 		puzzles.add(mainLetterPuzzle(rocky, redDoor, greenDoor, blueDoor, redRunicLine, greenRunicLine, blueRunicLine));
+		
+		List<RunicLine> decor = new ArrayList<>();
+		decor.add(new RunicLine(makeResetIcon(new Point(-5100, -2300)), 5, Palette.RED_BACKGROUND));
+		decor.add(new RunicLine(makeResetIcon(new Point(-6100, -2400)), 5, Palette.RED_BACKGROUND));
+		decor.add(new RunicLine(makeResetIcon(new Point(-7300, -2400)), 5, Palette.RED_BACKGROUND));
 
-		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts, lines);
+		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts, lines, decor);
 
 		return world;		
 	}
@@ -455,13 +461,24 @@ public class WorldFactory {
 		
 		List<TextSpot> texts = new ArrayList<>();
 		List<RunicLine> lines = new ArrayList<>();
+		List<RunicLine> decor = new ArrayList<>();
 
-		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts, lines);
+		attachWorld(world, rocky, walls, pitfalls, ramps, respawnPoints, doors, puzzles, barrels, plates, plateAnds, buttons, texts, lines, decor);
 
 		return world;		
 	}
 
+	private static Path2D.Double makeResetIcon(Point center){
+		double radius = 15;
+		Arc2D.Double arcShape = new Arc2D.Double(center.x - radius, center.y-radius, 2*radius, 2*radius, 45, 270, Arc2D.OPEN);
+		Path2D.Double refresh = new Path2D.Double(arcShape);
+		refresh.moveTo(center.x + radius/Math.sqrt(2), center.y + radius/Math.sqrt(2));
+		refresh.lineTo(center.x + radius/4, center.y + radius/4);
+		refresh.moveTo(center.x + radius/Math.sqrt(2), center.y + radius/Math.sqrt(2));
+		refresh.lineTo(center.x + radius/3, center.y + radius + radius/3);
 
+		return refresh;
+	}
 
 	private static List<Wall> buildWalls(Rectangle2D.Double rectangle){
 		List<Wall> walls = new ArrayList<>();
@@ -629,7 +646,7 @@ public class WorldFactory {
 	private static void attachWorld(World world, Rocky rocky, List<Wall> walls, List<Pitfall> pitfalls, List<Ramp> ramps,
 									List<RespawnPoint> respawnPoints, List<Door> doors, List<LetterPuzzle> puzzle,
 									List<Barrel> barrels, List<BarrelPlate> plates, List<PlateAnd> plateAnds,
-									List<Button> buttons, List<TextSpot> texts, List<RunicLine> lines) {
+									List<Button> buttons, List<TextSpot> texts, List<RunicLine> lines, List<RunicLine> decor) {
 		world.setRocky(rocky);
 		world.setWalls(walls);
 		world.setPitfalls(pitfalls);
@@ -643,6 +660,7 @@ public class WorldFactory {
 		world.setButtons(buttons);
 		world.setText(texts);
 		world.setLines(lines);
+		world.setDecor(decor);
 	}
 
 

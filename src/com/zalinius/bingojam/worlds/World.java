@@ -50,6 +50,7 @@ public class World implements GameObject, Topographical{
 	
 	private Collection<TextSpot> texts;
 	private List<RunicLine> lines;//because order matter
+	private List<RunicLine> decor; //drawn last
 
 
 	public void setRocky(Rocky rocky) {
@@ -103,6 +104,9 @@ public class World implements GameObject, Topographical{
 	public void setLines(List<RunicLine> lines) {
 		this.lines = lines;
 	}
+	public void setDecor(List<RunicLine> decor) {
+		this.decor = decor;
+	}
 
 	@Override
 	public void update(double delta) {
@@ -151,6 +155,7 @@ public class World implements GameObject, Topographical{
 		barrels.forEach(barrel -> barrel.render(g));
 		walls.forEach(wall -> wall.render(g));
 		texts.forEach(text -> text.render(g));
+		decor.forEach(deco -> deco.render(g));
 
 		rocky.render(g);
 	}

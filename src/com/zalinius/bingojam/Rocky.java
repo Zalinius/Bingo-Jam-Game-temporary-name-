@@ -52,9 +52,9 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 
 	public Rocky(Topographical worldSurface) {
 		//TODO cleanup
-		this.center = new Vertex(new Point(0, 0), 5); //Start
+		//this.center = new Vertex(new Point(0, 0), 5); //Start
 		//this.center = new Vertex(new Point(-3500, -2100), 5);// main room
-		//this.center = new Vertex(new Point(-4900, -2100), 5);// red wing start
+		this.center = new Vertex(new Point(-4900, -2100), 5);// red wing start
 		//this.center = new Vertex(new Point(-7000, -2100), 5);// red wing room 3
 		//this.center = new Vertex(new Point(-8500, -2100), 5);// red wing end
 		//this.center = new Vertex(new Point(-1500, -1100), 5);// blue wing start
