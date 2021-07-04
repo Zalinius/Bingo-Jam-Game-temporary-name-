@@ -319,12 +319,15 @@ public class WorldFactory {
 		texts.add(new TextSpot(new Point(-9200, -2100), RED_CODE));
 		texts.add(new TextSpot(new Point(-3500, -5800), GREEN_CODE));
 		texts.add(new TextSpot(new Point(-1500, 1600), BLUE_CODE));
-		texts.add(new TextSpot(new Point( 0, -2300), "You'll need a KEY", 32));
+		texts.add(new TextSpot(new Point( 0, -2200), "You'll need a KEY", 40));
 		
 		List<RunicLine> lines = new ArrayList<>();
 		
 		Path2D.Double tutorialLine = new Path2D.Double();
-		tutorialLine.moveTo(-700, -2300);
+		tutorialLine.moveTo(-800, -2400);
+		tutorialLine.lineTo(-600, -2400);
+		tutorialLine.moveTo(-700, -2400);
+		tutorialLine.lineTo(-700, -2300);
 		tutorialLine.lineTo(-5, -2300);
 		tutorialLine.lineTo(-5, -2650);
 		tutorialLine.moveTo(700, -2300);
