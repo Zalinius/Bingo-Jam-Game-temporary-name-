@@ -35,7 +35,7 @@ public class Pitfall implements Collideable, Locatable, Slopable{
 
 	public void render(Graphics2D g) {
 		Color pitColor = Palette.DEATH;
-		Color outlineColor = Palette.STONE;
+		Color outlineColor = Palette.GRAY_DEATH;
 		
 		g.setColor(pitColor);
 		g.fill(shape());

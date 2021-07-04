@@ -212,9 +212,9 @@ public class WorldFactory {
 		
 		
 		List<Door> doors = new ArrayList<>();
-		Door tutorialCodeDoor = new Door(new Point(-100, -2650), new Point(100, -2650));
+		Door tutorialCodeDoor = new Door(new Point(-100, -2650), new Point(100, -2650), Palette.GRAY);
 		doors.add(tutorialCodeDoor);
-		Door tutorialButtonDoor = new Door(new Point(-100, -2750), new Point(100, -2750));
+		Door tutorialButtonDoor = new Door(new Point(-100, -2750), new Point(100, -2750), Palette.GRAY);
 		doors.add(tutorialButtonDoor);
 		
 		//Main Doors
@@ -226,7 +226,7 @@ public class WorldFactory {
 		doors.add(blueDoor);
 		
 		//red doors
-		Door firstBarrelDoor = new Door(new Point(-5650, -2000), new Point(-5650, -2200), Palette.RED);
+		Door firstBarrelDoor = new Door(new Point(-5600, -2000), new Point(-5600, -2200), Palette.RED);
 		doors.add(firstBarrelDoor);
 		Door secondBarrelSideDoor = new Door(new Point(-6200, -2000), new Point(-6600, -2000), Palette.RED);
 		doors.add(secondBarrelSideDoor);
@@ -319,31 +319,71 @@ public class WorldFactory {
 		texts.add(new TextSpot(new Point(-9200, -2100), RED_CODE));
 		texts.add(new TextSpot(new Point(-3500, -5800), GREEN_CODE));
 		texts.add(new TextSpot(new Point(-1500, 1600), BLUE_CODE));
+		texts.add(new TextSpot(new Point( 0, -2300), "You'll need a KEY", 32));
 		
 		List<RunicLine> lines = new ArrayList<>();
+		
+		Path2D.Double tutorialLine = new Path2D.Double();
+		tutorialLine.moveTo(-700, -2300);
+		tutorialLine.lineTo(-5, -2300);
+		tutorialLine.lineTo(-5, -2650);
+		tutorialLine.moveTo(700, -2300);
+		tutorialLine.lineTo( 8, -2300);
+		tutorialLine.lineTo( 8, -2750);
+		lines.add(new RunicLine(tutorialLine, 10, Palette.GRAY_BACKGROUND));
+		
 		Path2D.Double redLine = new Path2D.Double();
 		redLine.moveTo(-9200, -2100);
-		redLine.lineTo(MAIN_ROOM.x-20, MAIN_ROOM.y);
-		redLine.lineTo(MAIN_ROOM.x-20, MAIN_ROOM.y+MAIN_ROOM_RADIUS+100);
-		RunicLine redRunicLine = new RunicLine(redLine, 20, Palette.RED_DEATH);
+		redLine.lineTo(MAIN_ROOM.x-30, MAIN_ROOM.y);
+		redLine.lineTo(MAIN_ROOM.x-30, MAIN_ROOM.y+MAIN_ROOM_RADIUS+100);
+		RunicLine redRunicLine = new RunicLine(redLine, 30, Palette.RED_DEATH);
 		lines.add(redRunicLine);
-		
 		Path2D.Double greenLine = new Path2D.Double();
 		greenLine.moveTo(MAIN_ROOM.x, MAIN_ROOM.y+MAIN_ROOM_RADIUS+200);
 		greenLine.lineTo(-3500, -5800);
-		RunicLine greenRunicLine = new RunicLine(greenLine, 20, Palette.GREEN_DEATH);
+		RunicLine greenRunicLine = new RunicLine(greenLine, 30, Palette.GREEN_DEATH);
 		lines.add(greenRunicLine);
-
 		Path2D.Double blueLine = new Path2D.Double();
 		blueLine.moveTo(-1500, 1600);
 		blueLine.lineTo(-1500, -1200);
 		blueLine.lineTo(-2400, -2100);
-		blueLine.lineTo(MAIN_ROOM.x+20, MAIN_ROOM.y);
-		blueLine.lineTo(MAIN_ROOM.x+20, MAIN_ROOM.y + MAIN_ROOM_RADIUS + 300);
-		//blueLine.lineTo(-3500, -5800);
-		RunicLine blueRunicLine = new RunicLine(blueLine, 20, Palette.BLUE_DEATH);
+		blueLine.lineTo(MAIN_ROOM.x+30, MAIN_ROOM.y);
+		blueLine.lineTo(MAIN_ROOM.x+30, MAIN_ROOM.y + MAIN_ROOM_RADIUS + 300);
+		RunicLine blueRunicLine = new RunicLine(blueLine, 30, Palette.BLUE_DEATH);
 		lines.add(blueRunicLine);
 
+		Path2D.Double barrelLine1 = new Path2D.Double();
+		barrelLine1.moveTo(-5300, -1900);
+		barrelLine1.lineTo(-5300, -2100);
+		barrelLine1.lineTo(-5600, -2100);
+		lines.add(new RunicLine(barrelLine1, 10, Palette.RED_BACKGROUND));
+		Path2D.Double barrelLine2 = new Path2D.Double();
+		barrelLine2.moveTo(-6700, -2400);
+		barrelLine2.lineTo(-6700, -1850);
+		barrelLine2.moveTo(-6700, -2100);
+		barrelLine2.lineTo(-6800, -2100);
+		lines.add(new RunicLine(barrelLine2, 10, Palette.RED_BACKGROUND));
+		Path2D.Double barrelLine3_1 = new Path2D.Double();
+		barrelLine3_1.moveTo(-7600, -2000);
+		barrelLine3_1.lineTo(-7600, -1900);
+		lines.add(new RunicLine(barrelLine3_1, 10, Palette.RED_BACKGROUND));
+		Path2D.Double barrelLine3_2 = new Path2D.Double();
+		barrelLine3_2.moveTo(-7750, -2400);
+		barrelLine3_2.lineTo(-7450, -2400);
+		barrelLine3_2.moveTo(-7600, -2400);
+		barrelLine3_2.lineTo(-7600, -2500);
+		lines.add(new RunicLine(barrelLine3_2, 10, Palette.RED_BACKGROUND));
+		Path2D.Double barrelLine3_3 = new Path2D.Double();
+		barrelLine3_3.moveTo(-7900, -1800);
+		barrelLine3_3.lineTo(-7900, -2400);
+		barrelLine3_3.moveTo(-7600, -2100);
+		barrelLine3_3.lineTo(-8000, -2100);
+		lines.add(new RunicLine(barrelLine3_3, 10, Palette.RED_BACKGROUND));		
+		
+		Path2D.Double mazeLine = new Path2D.Double();
+		mazeLine.moveTo(-3500, -4200);
+		mazeLine.lineTo(-3500, -4850);
+		lines.add(new RunicLine(mazeLine, 10, Palette.GREEN_BACKGROUND));
 		
 		List<LetterPuzzle> puzzles =new ArrayList<>();
 		puzzles.add(tutorialLetterPuzzle(rocky, tutorialCodeDoor));
@@ -395,7 +435,7 @@ public class WorldFactory {
 		List<Ramp> ramps = Arrays.asList(new Ramp(new Point(-500, 300), 400, 200, new Vector3(1, 0, -5)));
 		List<RespawnPoint> respawnPoints = Arrays.asList(buildRespawnPoint(rocky, new Point()), buildRespawnPoint(rocky, new Point(300, 300)));
 
-		Door codeDoorOpen = new Door(new Point(-400, -100), new Point(-400, 100));
+		Door codeDoorOpen = new Door(new Point(-400, -100), new Point(-400, 100), Palette.GRAY);
 		List<Door> doors = Arrays.asList(codeDoorOpen);
 		
 		List<Button> buttons = new ArrayList<>();

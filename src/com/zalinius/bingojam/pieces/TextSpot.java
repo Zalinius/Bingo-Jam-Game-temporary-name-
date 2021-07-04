@@ -12,10 +12,16 @@ import com.zalinius.zje.physics.Point;
 public class TextSpot implements Graphical{
 	private Point center;
 	private String textString;
+	private float fontSize;
 	
 	public TextSpot(Point center, String textString) {
+		this(center, textString, 72);
+	}
+	
+	public TextSpot(Point center, String textString, double fontSize) {
 		this.center = center;
 		this.textString = textString;
+		this.fontSize = (float)fontSize;
 	}
 
 	
@@ -34,12 +40,11 @@ public class TextSpot implements Graphical{
 		double yText = center.y - metrics.getHeight()/2.0 + metrics.getAscent();
 
 		g.drawString(textString,(float) xText,(float) yText);
-
 	}
 
-	private static Font prepareFont() {
+	private Font prepareFont() {
 		Font font = FontSingleton.getFont();
-		font = font.deriveFont((float) (72));
+		font = font.deriveFont((fontSize));
 		font = font.deriveFont(Font.BOLD);
 		return font;
 	}

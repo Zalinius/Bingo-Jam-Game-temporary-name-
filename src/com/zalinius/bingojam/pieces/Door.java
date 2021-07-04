@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
 import com.zalinius.bingojam.physics.CollideableLine;
-import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.zje.architecture.Graphical;
 import com.zalinius.zje.math.Interpolation;
 import com.zalinius.zje.physics.Point;
@@ -16,13 +15,6 @@ public class Door implements Graphical, CollideableLine{
 	private Point p2;
 	private boolean open;
 	private Color color;
-
-	public Door(Point p1, Point p2) {
-		this.p1 = p1;
-		this.p2 = p2;
-		this.open = false;
-		this.color = Palette.DOOR;
-	}
 	
 	public Door(Point p1, Point p2, Color color) {
 		this.p1 = p1;
@@ -30,8 +22,6 @@ public class Door implements Graphical, CollideableLine{
 		this.open = false;
 		this.color = color;
 	}
-
-
 
 	@Override
 	public void render(Graphics2D g) {
