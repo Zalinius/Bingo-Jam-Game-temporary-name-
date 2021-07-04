@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -133,6 +134,26 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 			Point spot = center.position().add(projection);
 			g.draw(new Line2D.Double(spot.point2D(), spot.point2D()));
 		}
+		{
+			Vector3 leftSmilePoint = smilePoints().get(0);
+			Vector3 bottomSmilePoint = smilePoints().get(1);
+			Vector3 rightSmilePoint = smilePoints().get(2);
+			
+			leftSmilePoint = orientation.rotate(leftSmilePoint);
+			bottomSmilePoint = orientation.rotate(bottomSmilePoint);
+			rightSmilePoint = orientation.rotate(rightSmilePoint);
+			
+			Vector leftSmileProjection = leftSmilePoint.project();
+			Vector bottomSmileProjection = bottomSmilePoint.project();
+			Vector rightSmileProjection = rightSmilePoint.project();
+			
+			Point leftSmileFinalPoint = center.position().add(leftSmileProjection);
+			Point bottomSmileFinalPoint = center.position().add(bottomSmileProjection);
+			Point rightSmileFinalPoint = center.position().add(rightSmileProjection);
+			
+			g.draw(new QuadCurve2D.Double(leftSmileFinalPoint.x, leftSmileFinalPoint.y, bottomSmileFinalPoint.x, bottomSmileFinalPoint.y, rightSmileFinalPoint.x, rightSmileFinalPoint.y));
+			//render smile
+		}
 
 		g.setColor(Palette.BRIGHT);
 		g.setStroke(new BasicStroke(5));
@@ -193,10 +214,16 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		points.add(new Vector3(1, -1, 2).normalize().scale(radius));
 		points.add(new Vector3(-1, -1, 2).normalize().scale(radius));
 
+		return points;
+	}
+	
+	private List<Vector3> smilePoints(){
+		List<Vector3> points = new ArrayList<>();
 		points.add(new Vector3(-1, 1, 2).normalize().scale(radius));
-		points.add(new Vector3(-0.5, 1.25, 2).normalize().scale(radius));
-		points.add(new Vector3( 0, 1.35, 2).normalize().scale(radius));
-		points.add(new Vector3(0.5, 1.25, 2).normalize().scale(radius));
+		points.add(new Vector3( 0, 2, 2).normalize().scale(radius));
+//		points.add(new Vector3(-0.5, 1.25, 2).normalize().scale(radius));
+//		points.add(new Vector3( 0, 1.35, 2).normalize().scale(radius));
+//		points.add(new Vector3(0.5, 1.25, 2).normalize().scale(radius));
 		points.add(new Vector3( 1, 1, 2).normalize().scale(radius));
 
 		return points;
