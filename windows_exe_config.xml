@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>target/bingojamgametempname-0.1.0.jar</jar>
+  <jar>target/bingojamgametempname-1.0.1.jar</jar>
   <outfile>target/windows/BingoJam.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
