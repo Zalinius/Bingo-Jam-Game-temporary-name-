@@ -311,7 +311,7 @@ public class WorldFactory {
 		buttons.add(new Button(new Point(-6100, -2400), () -> secondBarrels.forEach(b -> b.reset()), rocky, Palette.RED_BACKGROUND, false));
 		buttons.add(new Button(new Point(-7300, -2400), () -> thirdRoomBarrels.forEach(b -> b.reset()), rocky, Palette.RED_BACKGROUND, false));
 		//Green wing
-		buttons.add(new Button(new Point(-3500, -4200), () -> mazeDoor.open(), rocky, Palette.GREEN_BACKGROUND, false));
+		buttons.add(new Button(new Point(-3500, -4200), () -> mazeDoor.open(), rocky, Palette.GREEN_BACKGROUND, true));
 		//Blue Wing
 		buttons.add(new Button(new Point(-1800, -600), ()-> {leftDoor.close(); middleDoor.open(); rightDoor.open();}, rocky, Palette.BLUE_BACKGROUND, false));
 		buttons.add(new Button(new Point(-1500, -800), ()-> {leftDoor.open(); middleDoor.close(); rightDoor.open();}, rocky, Palette.BLUE_BACKGROUND, false));
