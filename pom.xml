@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.zalinius</groupId>
 	<artifactId>bingojamgametempname</artifactId>
-	<version>0.1.0</version>
+	<version>1.0.1</version>
 	<properties>
 		<mainClass>com.zalinius.bingojam.BingoJamGame</mainClass>
 	</properties>
