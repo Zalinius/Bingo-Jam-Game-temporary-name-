@@ -421,7 +421,7 @@ public class WorldFactory {
 	public static LetterPuzzle mainLetterPuzzle(Rocky rocky, Door redDoor, Door greenDoor, Door blueDoor, RunicLine redLine, RunicLine greenLine, RunicLine blueLine) {
 		List<LetterTile> tiles = new ArrayList<>();
 		List<Character> letters = Arrays.asList('R', 'F', 'D', 'L', 'E', 'Z', 'A', 'O');
-		List<Point> points = Geometry.regularPolygon(MAIN_ROOM, MAIN_ROOM_SIDES, 300);
+		List<Point> points = com.zalinius.zje.math.Geometry.regularPolygon(MAIN_ROOM, MAIN_ROOM_SIDES, 300);
 
 		for (int i = 0; i < letters.size(); i++) {
 			tiles.add(new LetterTile(letters.get(i), points.get(i)));
@@ -545,24 +545,14 @@ public class WorldFactory {
 		double innerRadius = 700;
 		double outerRadius = innerRadius / Math.cos(Math.PI/MAIN_ROOM_SIDES);
 		
-		List<Point> points = Geometry.regularPolygon(MAIN_ROOM, MAIN_ROOM_SIDES, outerRadius);
+		List<Point> points = com.zalinius.zje.math.Geometry.regularPolygon(MAIN_ROOM, MAIN_ROOM_SIDES, outerRadius);
 		return points;
 	}
 	
 	private static Shape octogonalShape() {
 		List<Point> points = octogonalPoints();
-		Path2D.Double path = new Path2D.Double();
-		
-		Iterator<Point> it = points.iterator();
-		Point firstPoint = it.next();
-		path.moveTo(firstPoint.x, firstPoint.y);
-		while (it.hasNext()) {
-			Point point = it.next();
-			path.lineTo(point.x, point.y);
-		}
-		path.closePath();
-		
-		return path;
+		Shape shape = com.zalinius.zje.math.Geometry.makePolygonShape(points);
+		return shape;
 	}
 	
 	private static List<Wall> octogonalRoom(){

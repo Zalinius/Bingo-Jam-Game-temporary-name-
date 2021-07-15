@@ -4,7 +4,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,27 +65,5 @@ public class Geometry {
 		return new Vector(line).length();
 	}
 	
-	/**
-	 * Creates the points for a regular polygon
-	 * @param center The center point of the polygon
-	 * @param sides The number of sides of the polygon, minimum 3
-	 * @param radius The outer radius of the polygon, i.e. the distance between the center and any point
-	 * @return The vertices of an polygon
-	 */
-	public static List<Point> regularPolygon(Point center, int sides, double radius) {
-		List<Point> points = new ArrayList<>();
-		sides = Math.max(sides, 3);
-		
-		for(int i = 0; i != sides; ++i) {
-			double angle = (2*Math.PI) * ((i+.5) / sides);
-			double x = radius * Math.cos(angle) + center.x;
-			double y = radius * Math.sin(angle) + center.y;
-			
-			points.add(new Point(x, y));
-		}
-		
-		return points;
-	}
-
 
 }
