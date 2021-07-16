@@ -5,7 +5,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zalinius.bingojam.plugins.Axes;
+import org.libsdl.SDL;
+import org.libsdl.SDL_Error;
+
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.math.Vector3;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.resources.FontSingleton;
 import com.zalinius.bingojam.worlds.World;
@@ -14,7 +20,12 @@ import com.zalinius.zje.architecture.GameContainer;
 import com.zalinius.zje.architecture.input.Inputtable;
 import com.zalinius.zje.plugins.AbstractPlugin;
 
+import uk.co.electronstudio.sdl2gdx.SDL2Controller;
+import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager;
+
 public class BingoJamGame extends GameContainer{
+static    SDL2Controller recent;
+
 	public static void main(String[] args) {
 		BingoJamGame game = new BingoJamGame();
 		game.startGame();

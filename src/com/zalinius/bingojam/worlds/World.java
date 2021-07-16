@@ -65,14 +65,15 @@ public class World implements GameObject, Topographical{
 	private MusicTrack music;
 	
 	public World() {
-		music = new MusicTrack(this);
 		
 		redZone = Geometry.centeredRectangle(new Point(-6800, -2100), 5200, 1600);
 		greenZone = Geometry.centeredRectangle(new Point(-3500, -4400), 1200, 3200);
 		blueZone = new Rectangle2D.Double(-2800, -2200, 1700, 4000);
+
 	}
 	
 	public void startMusic() {
+		music = new MusicTrack(this);
 		music.start();
 	}
 

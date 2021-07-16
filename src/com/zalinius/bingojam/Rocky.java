@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.zalinius.bingojam.controls.RockyGamepadInput;
 import com.zalinius.bingojam.physics.CollideableLine;
 import com.zalinius.bingojam.physics.Kinetic;
 import com.zalinius.bingojam.physics.Quaternion;
@@ -82,6 +83,7 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 
 	@Override
 	public void update(double delta) {
+		controller.update(delta);
 		Vector wallbumpingImpulse = getImpulseFromHittingWalls();
 		center.impulse(wallbumpingImpulse);
 
@@ -116,12 +118,16 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 
 		return forceOnRocky2D;
 	}
+	private RockyGamepadInput controller = new RockyGamepadInput();
 
 	private Forceful getPushingForce() {
 		Vector pushing = directionOfInput;
-		if(!pushing.isZeroVector()) {
-			pushing = pushing.normalize().scale(acceleration);
-		}
+		
+		pushing = controller.getInput();
+		pushing = pushing.scale(acceleration);
+//		if(!pushing.isZeroVector()) {
+//			pushing = pushing.normalize().scale(acceleration);
+//		}
 		return new Force(pushing);
 	}
 
