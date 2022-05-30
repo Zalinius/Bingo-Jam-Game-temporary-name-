@@ -3,11 +3,11 @@ package com.zalinius.bingojam;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,12 +30,14 @@ import com.zalinius.bingojam.physics.forces.in3d.StaticFriction3D;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.bingojam.utilities.Geometry;
 import com.zalinius.zje.architecture.GameObject;
-import com.zalinius.zje.architecture.input.Inputtable;
+import com.zalinius.zje.architecture.input.actions.Axisable;
+import com.zalinius.zje.architecture.input.actions.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Locatable;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.physics.Vector;
 import com.zalinius.zje.physics.Vertex;
+import com.zalinius.zje.utilities.input.GamepadKeyboardDirection;
 
 public class Rocky implements GameObject, Locatable, Kinetic{
 
@@ -50,7 +52,7 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 
 	private boolean youreacat;
 
-	private Vector directionOfInput;
+	private GamepadKeyboardDirection input;
 
 	private Topographical worldSurface;
 
@@ -66,13 +68,14 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		//this.center = new Vertex(new Point(-3500, -3500), 5);// green wing start
 		//this.center = new Vertex(new Point(-3500, -4200), 5);// green wing middle
 		//this.center = new Vertex(new Point(-3500, -5800), 5);// green wing end
+		//this.center = new Vertex(new Point(-3500, -1000), 5);// final corridor
 
 		this.respawnPoint = center.position();
 		this.radius = 45;
 		this.orientation = new Quaternion();
-		this.directionOfInput = new Vector();
-		this.acceleration = 500;
-		this.friction = .01;
+		this.input = new GamepadKeyboardDirection();
+		this.acceleration = 1000;
+		this.friction = .2;
 		this.bouncyness = 0.5;
 
 		this.youreacat = false;
@@ -118,10 +121,10 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 	}
 
 	private Forceful getPushingForce() {
-		Vector pushing = directionOfInput;
-		if(!pushing.isZeroVector()) {
-			pushing = pushing.normalize().scale(acceleration);
-		}
+		Vector pushing = input.direction();
+		
+		pushing = pushing.scale(acceleration);
+
 		return new Force(pushing);
 	}
 
@@ -196,50 +199,6 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		return new Ellipse2D.Double(center.x()-radius, center.y()-radius, 2*radius, 2*radius);
 	}	
 
-
-	//INPUT//
-	public List<Inputtable> inputs(){
-		List <Inputtable> inputs = new ArrayList<>();
-
-		inputs.add(directionInput(KeyEvent.VK_W, new Vector( 0, -1)));
-		inputs.add(directionInput(KeyEvent.VK_A, new Vector(-1,  0)));
-		inputs.add(directionInput(KeyEvent.VK_S, new Vector( 0,  1)));
-		inputs.add(directionInput(KeyEvent.VK_D, new Vector( 1,  0)));
-
-		inputs.add(new Inputtable() {
-
-			@Override
-			public void released() {/*Do nothing*/}
-
-			@Override
-			public void pressed() {
-				System.out.println("(" + (int)position().x + ", " + (int)position().y + ")");				
-			}
-
-			@Override
-			public int keyCode() {
-				return KeyEvent.VK_SPACE;
-			}
-		});
-
-		inputs.add(new Inputtable() {
-
-			@Override
-			public void released() {/*Do nothing*/}
-
-			@Override
-			public void pressed() {
-				respawn();
-			}
-
-			@Override
-			public int keyCode() {
-				return KeyEvent.VK_K;
-			}
-		});
-
-		return inputs;
-	}
 
 	public void makeCat() {
 		this.youreacat = true;
@@ -328,27 +287,6 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		return points;
 	}
 
-
-	private Inputtable directionInput(int key, Vector direction) {
-		return new Inputtable() {
-
-			@Override
-			public void released() {
-				directionOfInput = directionOfInput.subtract(direction);
-			}
-
-			@Override
-			public void pressed() {
-				directionOfInput = directionOfInput.add(direction);		
-			}
-
-			@Override
-			public int keyCode() {
-				return key;
-			}
-		};
-	}
-
 	@Override
 	public Point position() {
 		return center.position();
@@ -366,7 +304,7 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 		acceleration = 0;
 	}
 	public void enable() {
-		acceleration = 500;
+		acceleration = 1000;
 	}
 
 	public void setRespawn(Point respawnPoint) {
@@ -442,6 +380,14 @@ public class Rocky implements GameObject, Locatable, Kinetic{
 			}
 		}
 		return impulse;
+	}
+
+	public Collection<Inputtable> inputs() {
+		return input.inputs();
+	}
+
+	public Collection<Axisable> axisInputs() {
+		return input.axisInput();
 	}
 
 

@@ -1,20 +1,21 @@
 package com.zalinius.bingojam;
 
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zalinius.bingojam.plugins.Axes;
 import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.resources.FontSingleton;
 import com.zalinius.bingojam.worlds.World;
 import com.zalinius.bingojam.worlds.WorldFactory;
 import com.zalinius.zje.architecture.GameContainer;
-import com.zalinius.zje.architecture.input.Inputtable;
+import com.zalinius.zje.architecture.input.actions.Axisable;
+import com.zalinius.zje.architecture.input.actions.Inputtable;
+import com.zalinius.zje.architecture.input.types.BinaryInput;
 import com.zalinius.zje.plugins.AbstractPlugin;
 
 public class BingoJamGame extends GameContainer{
+
 	public static void main(String[] args) {
 		BingoJamGame game = new BingoJamGame();
 		game.startGame();
@@ -24,8 +25,8 @@ public class BingoJamGame extends GameContainer{
 
 	public BingoJamGame() {
 		super("Bingo jam game (temp name)", 1000, 1000);
-		this.gameWorld = WorldFactory.theWorld();
-		addControls(getControls(), null);
+		this.gameWorld = WorldFactory.theWorld(getRumbleListener());
+		addControls(getControls(), null, getAxisControls());
 		prepareResources();
 		this.gameWorld.startMusic();
 	}
@@ -34,7 +35,7 @@ public class BingoJamGame extends GameContainer{
 	@Override
 	public List<AbstractPlugin> getPlugins() {
 		List<AbstractPlugin> plugins = new ArrayList<>();
-		plugins.add(gameWorld.getBackground(()-> exit()));
+		plugins.add(gameWorld.getBackground(this::exit, getRumbleListener()));
 		FollowCam cam = this.gameWorld.getFollowCamera();
 		plugins.add(cam);
 		//plugins.add(new Axes(cam));
@@ -43,7 +44,21 @@ public class BingoJamGame extends GameContainer{
 
 	private List<Inputtable> getControls(){
 		List<Inputtable> inputs = new ArrayList<>();
-		inputs.add(new Inputtable() {
+		inputs.add(exitGameInput(BinaryInput.KEY_ESCAPE));
+		inputs.add(exitGameInput(BinaryInput.BUTTON_BACK));
+		inputs.addAll(gameWorld.getKeyboardControls());
+
+		return inputs;
+	}
+	
+	private List<Axisable> getAxisControls(){
+		List<Axisable> axisInputs = new ArrayList<>();
+		axisInputs.addAll(gameWorld.getAxisControls());
+		return axisInputs;
+	}
+	
+	private Inputtable exitGameInput(BinaryInput input) {
+		return new Inputtable() {
 
 			@Override
 			public void released() {
@@ -56,16 +71,11 @@ public class BingoJamGame extends GameContainer{
 			}
 
 			@Override
-			public int keyCode() {
-				return KeyEvent.VK_ESCAPE;
+			public BinaryInput binaryInput() {
+				return input;
 			}
-		});
-
-		inputs.addAll(gameWorld.getKeyboardControls());
-
-		return inputs;
+		};
 	}
-
 
 	@Override
 	public void render(Graphics2D g) {
@@ -75,11 +85,6 @@ public class BingoJamGame extends GameContainer{
 	@Override
 	public void update(double delta) {
 		this.gameWorld.update(delta);
-	}
-
-	@Override
-	public void shutdownActions() {
-		System.out.println("Goodbye Bingo");		
 	}
 
 	private static void prepareResources() {

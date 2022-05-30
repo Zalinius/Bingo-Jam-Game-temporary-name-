@@ -6,6 +6,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import com.zalinius.bingojam.puzzle.PlateAnd;
 import com.zalinius.bingojam.puzzle.PuzzleFactory;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.bingojam.utilities.Geometry;
+import com.zalinius.zje.architecture.input.RumbleListener;
 import com.zalinius.zje.math.Interpolation;
 import com.zalinius.zje.physics.Point;
 
@@ -46,7 +48,7 @@ public class WorldFactory {
 	private static final String GREEN_CODE = "AROZ";
 	private static final String BLUE_CODE  = "DOEF";
 
-	public static World theWorld() {
+	public static World theWorld(RumbleListener rumbleListener) {
 		World world = new World();
 
 		Rocky rocky = new Rocky(world);
@@ -80,7 +82,6 @@ public class WorldFactory {
 		
 		//Main chamber
 		walls.addAll(octogonalRoom());
-		//walls.addAll(northSouthCorridor(Geometry.centeredRectangle(MAIN_ROOM.add(0, MAIN_ROOM_RADIUS + 400), 400 , 800)));
 		walls.add(new Wall(new Point(-3700, -1400), new Point(-3700, 12000)));
 		walls.add(new Wall(new Point(-3300, -1400), new Point(-3300, 12000)));
 		
@@ -394,7 +395,7 @@ public class WorldFactory {
 		
 		List<LetterPuzzle> puzzles =new ArrayList<>();
 		puzzles.add(tutorialLetterPuzzle(rocky, tutorialCodeDoor));
-		puzzles.add(mainLetterPuzzle(rocky, redDoor, greenDoor, blueDoor, redRunicLine, greenRunicLine, blueRunicLine));
+		puzzles.add(mainLetterPuzzle(rocky, redDoor, greenDoor, blueDoor, redRunicLine, greenRunicLine, blueRunicLine, rumbleListener));
 		
 		List<RunicLine> decor = new ArrayList<>();
 		decor.add(new RunicLine(makeResetIcon(new Point(-5100, -2300)), 5, Palette.RED_BACKGROUND));
@@ -418,7 +419,7 @@ public class WorldFactory {
 		return new LetterPuzzle(tiles, actions, rocky);	
 	}
 
-	public static LetterPuzzle mainLetterPuzzle(Rocky rocky, Door redDoor, Door greenDoor, Door blueDoor, RunicLine redLine, RunicLine greenLine, RunicLine blueLine) {
+	public static LetterPuzzle mainLetterPuzzle(Rocky rocky, Door redDoor, Door greenDoor, Door blueDoor, RunicLine redLine, RunicLine greenLine, RunicLine blueLine, RumbleListener rumbler) {
 		List<LetterTile> tiles = new ArrayList<>();
 		List<Character> letters = Arrays.asList('R', 'F', 'D', 'L', 'E', 'Z', 'A', 'O');
 		List<Point> points = com.zalinius.zje.math.Geometry.regularPolygon(MAIN_ROOM, MAIN_ROOM_SIDES, 300);
@@ -429,9 +430,9 @@ public class WorldFactory {
 		
 		Map<String, Runnable> actions = new HashMap<>();
 		actions.put(CAT_CODE,   () -> rocky.makeCat());
-		actions.put(RED_CODE,   () -> {redDoor.open();   redLine.changeColor(Palette.RED_LIFE);});
-		actions.put(GREEN_CODE, () -> {greenDoor.open(); greenLine.changeColor(Palette.GREEN_LIFE);});
-		actions.put(BLUE_CODE,  () -> {blueDoor.open();  blueLine.changeColor(Palette.BLUE_LIFE);});
+		actions.put(RED_CODE,   () -> {redDoor.open();   redLine.changeColor(Palette.RED_LIFE);     rumbler.requestRumble(Duration.ofSeconds(5), 0.5);});
+		actions.put(GREEN_CODE, () -> {greenDoor.open(); greenLine.changeColor(Palette.GREEN_LIFE); rumbler.requestRumble(Duration.ofSeconds(5), 0.5);});
+		actions.put(BLUE_CODE,  () -> {blueDoor.open();  blueLine.changeColor(Palette.BLUE_LIFE);   rumbler.requestRumble(Duration.ofSeconds(5), 0.5);});
 		
 		return new LetterPuzzle(tiles, actions, rocky);	
 	}

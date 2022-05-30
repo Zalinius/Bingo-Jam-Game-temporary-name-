@@ -32,7 +32,9 @@ import com.zalinius.bingojam.puzzle.PlateAnd;
 import com.zalinius.bingojam.resources.Palette;
 import com.zalinius.bingojam.utilities.Geometry;
 import com.zalinius.zje.architecture.GameObject;
-import com.zalinius.zje.architecture.input.Inputtable;
+import com.zalinius.zje.architecture.input.RumbleListener;
+import com.zalinius.zje.architecture.input.actions.Axisable;
+import com.zalinius.zje.architecture.input.actions.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.plugins.AbstractPlugin;
@@ -65,14 +67,15 @@ public class World implements GameObject, Topographical{
 	private MusicTrack music;
 	
 	public World() {
-		music = new MusicTrack(this);
 		
 		redZone = Geometry.centeredRectangle(new Point(-6800, -2100), 5200, 1600);
 		greenZone = Geometry.centeredRectangle(new Point(-3500, -4400), 1200, 3200);
 		blueZone = new Rectangle2D.Double(-2800, -2200, 1700, 4000);
+
 	}
 	
 	public void startMusic() {
+		music = new MusicTrack(this);
 		music.start();
 	}
 
@@ -193,6 +196,9 @@ public class World implements GameObject, Topographical{
 		inputs.addAll(rocky.inputs());
 		return inputs;
 	}
+	public Collection<Axisable> getAxisControls() {
+		return rocky.axisInputs();
+	}
 
 	public FollowCam getFollowCamera() {
 		return new FollowCam(rocky);
@@ -251,8 +257,8 @@ public class World implements GameObject, Topographical{
 		return rocky;
 	}
 
-	public AbstractPlugin getBackground(Runnable exitAction) {
-		return new ChangingBackgroundColor(Palette.GROUND, Palette.BRIGHT, rocky, exitAction);
+	public AbstractPlugin getBackground(Runnable exitAction, RumbleListener rumbleListener) {
+		return new ChangingBackgroundColor(Palette.GROUND, Palette.BRIGHT, rocky, exitAction, rumbleListener);
 	}
 	
 	public boolean inRedZone() {
@@ -266,6 +272,7 @@ public class World implements GameObject, Topographical{
 	public boolean inBlueZone() {
 		return blueZone.contains(rocky.position().point2D());
 	}
+
 
 
 }

@@ -12,27 +12,23 @@ void setBuildStatus(String message, String state) {
 
 pipeline {
 	agent any
+	tools {
+        maven 'maven3'
+    }
+    environment{
+        SONAR_CREDS=credentials('sonar')
+    }
+	
 	stages {
 		// Note that the agent automatically checks out the source code from Github	
-
-    	stage('Compile') { 
+        stage('Build') {
             steps {
-            	sh 'mvn --batch-mode compile'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'mvn --batch-mode test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
+                sh 'mvn --batch-mode clean test'
             }
         }
         stage('Package Jar') {
             steps {
-                sh 'mvn --batch-mode -DskipTests clean package'
+                sh 'mvn --batch-mode clean package'
             }
         }
         stage('Deploy') {
@@ -48,7 +44,9 @@ pipeline {
 				LAUNCH4J_HOME = '/usr/local/bin/launch4j'
 				JRE_WIN = '/usr/local/bin/OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip'
 			}
-			steps {
+			steps {			
+                sh 'mvn sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONAR_CREDS' //Send test coverage to Sonarqube, and let it know there is a new version of main to cover
+			
 				//Make EXE
 				sh 'mkdir target/windows'
 				sh '${JAVA_8_HOME}/java -jar ${LAUNCH4J_HOME}/launch4j.jar windows_exe_config.xml'
@@ -62,6 +60,11 @@ pipeline {
 	    }
 	}
 	post {
+	
+	    always {
+            junit '**/target/*-reports/TEST-*.xml'
+        }
+    	
     	success {
        		setBuildStatus('Build succeeded', 'SUCCESS');
     	}
