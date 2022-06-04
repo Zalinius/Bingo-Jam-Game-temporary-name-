@@ -54,8 +54,8 @@ pipeline {
                 //Get JRE
               unzip zipFile: "${JRE_WIN}", dir: 'target/windows/jre/'
                 
-                sh '${BUTLER_HOME}/butler push target/windows/ zalinius/${ITCHIO_NAME}:windows -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'				
-                sh '${BUTLER_HOME}/butler push target/${PROJECT_NAME}-${GAME_VERSION}.jar zalinius/${ITCHIO_NAME}:win-linux-mac -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'
+                sh '${BUTLER_HOME} push target/windows/ zalinius/${ITCHIO_NAME}:windows -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'				
+                sh '${BUTLER_HOME} push target/${PROJECT_NAME}-${GAME_VERSION}.jar zalinius/${ITCHIO_NAME}:win-linux-mac -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'
             }
         }
     }
