@@ -32,7 +32,6 @@ pipeline {
             }
         }
         stage('Deploy') {
-            tool name: 'launch4j', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
             when {
  				branch 'main'
 	       	}
@@ -43,7 +42,9 @@ pipeline {
 				
 				JRE_WIN = '/usr/local/bin/OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip'
 			}
-			steps {			
+			steps {		
+				            tool name: 'launch4j', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+
                 sh 'mvn sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONAR_CREDS' //Send test coverage to Sonarqube, and let it know there is a new version of main to cover
 			
 				//Make EXE
