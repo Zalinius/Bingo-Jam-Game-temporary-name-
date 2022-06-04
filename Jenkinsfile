@@ -14,7 +14,6 @@ pipeline {
     agent any
     tools {
         maven 'maven3'
-	com.cloudbees.jenkins.plugins.customtools.CustomTool 'launch4j'
     }
     environment{
         SONAR_CREDS=credentials('sonar')
@@ -33,7 +32,8 @@ pipeline {
             }
         }
         stage('Deploy') {
-        	when {
+            tool name: 'launch4j', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+            when {
  				branch 'main'
 	       	}
 			environment {
