@@ -11,9 +11,10 @@ void setBuildStatus(String message, String state) {
 
 
 pipeline {
-	agent any
-	tools {
+    agent any
+    tools {
         maven 'maven3'
+	launch4j 'launch4j'
     }
     environment{
         SONAR_CREDS=credentials('sonar')
@@ -40,8 +41,6 @@ pipeline {
 				PROJECT_NAME = sh script: 'mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout', returnStdout: true 
 				ITCHIO_NAME = 'bingo-jam-game-temporary-name'
 				
-				JAVA_8_HOME = '/usr/lib/jvm/java-8-openjdk-amd64/bin'
-				LAUNCH4J_HOME = '/usr/local/bin/launch4j'
 				JRE_WIN = '/usr/local/bin/OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip'
 			}
 			steps {			
@@ -49,7 +48,7 @@ pipeline {
 			
 				//Make EXE
 				sh 'mkdir target/windows'
-				sh '${JAVA_8_HOME}/java -jar ${LAUNCH4J_HOME}/launch4j.jar windows_exe_config.xml'
+				sh 'launch4j windows_exe_config.xml'
 
 				//Get JRE
 				unzip zipFile: '/usr/local/bin/OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip', dir: 'target/windows/jre/'
