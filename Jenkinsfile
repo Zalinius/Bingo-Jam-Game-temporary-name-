@@ -14,7 +14,7 @@ pipeline {
     agent any
     tools {
         maven 'maven3'
-	launch4j 'launch4j'
+	CustomTool 'launch4j'
     }
     environment{
         SONAR_CREDS=credentials('sonar')
