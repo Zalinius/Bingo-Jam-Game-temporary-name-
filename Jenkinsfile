@@ -42,7 +42,7 @@ pipeline {
                 
                 LAUNCH4J_HOME = tool name: 'launch4j', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
                 BUTLER_HOME = tool name: 'butler', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
-                JRE_WIN = tool name: 'jre17', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+                JRE_WIN = '/var/jenkins_home/downloads/jre17'
             }
             steps {
                 sh 'mvn sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONAR_CREDS' //Send test coverage to Sonarqube, and let it know there is a new version of main to cover
