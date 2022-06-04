@@ -13,7 +13,7 @@ void setBuildStatus(String message, String state) {
 pipeline {
     agent any
     tools {
-        maven 'maven3'
+        maven 'maven3',
 	CustomTool 'launch4j'
     }
     environment{
