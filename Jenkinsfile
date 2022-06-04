@@ -48,7 +48,7 @@ pipeline {
 
                 //Make EXE
                 sh 'mkdir target/windows'
-                sh '${LAUNCH4J_HOME} windows_exe_config.xml'
+                sh '${LAUNCH4J_HOME}/launch4j windows_exe_config.xml'
 
                 //Get JRE
                 unzip zipFile: '/usr/local/bin/OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip', dir: 'target/windows/jre/'
