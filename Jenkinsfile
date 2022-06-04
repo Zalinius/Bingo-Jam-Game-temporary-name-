@@ -52,7 +52,7 @@ pipeline {
                 sh '${LAUNCH4J_HOME}/launch4j windows_exe_config.xml'
 
                 //Get JRE
-                unzip zipFile: '${JRE_WIN}', dir: 'target/windows/jre/'
+                unzip zipFile: $JRE_WIN, dir: 'target/windows/jre/'
                 
                 sh 'sudo ${BUTLER_HOME}/butler push target/windows/ zalinius/${ITCHIO_NAME}:windows -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'				
                 sh 'sudo ${BUTLER_HOME}/butler push target/${PROJECT_NAME}-${GAME_VERSION}.jar zalinius/${ITCHIO_NAME}:win-linux-mac -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'
