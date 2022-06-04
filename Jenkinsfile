@@ -41,7 +41,8 @@ pipeline {
                 ITCHIO_NAME = 'bingo-jam-game-temporary-name'
                 
                 LAUNCH4J_HOME = tool name: 'launch4j', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
-                JRE_WIN = '/usr/local/bin/OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip'
+                BUTLER_HOME = tool name: 'butler', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+                JRE_WIN = tool name: 'jre17', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
             }
             steps {
                 sh 'mvn sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONAR_CREDS' //Send test coverage to Sonarqube, and let it know there is a new version of main to cover
@@ -51,10 +52,10 @@ pipeline {
                 sh '${LAUNCH4J_HOME}/launch4j windows_exe_config.xml'
 
                 //Get JRE
-                unzip zipFile: '/usr/local/bin/OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip', dir: 'target/windows/jre/'
+                unzip zipFile: 'JRE_WIN', dir: 'target/windows/jre/'
                 
-                sh 'sudo butler push target/windows/ zalinius/${ITCHIO_NAME}:windows -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'				
-                sh 'sudo butler push target/${PROJECT_NAME}-${GAME_VERSION}.jar zalinius/${ITCHIO_NAME}:win-linux-mac -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'
+                sh 'sudo ${BUTLER_HOME}/butler push target/windows/ zalinius/${ITCHIO_NAME}:windows -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'				
+                sh 'sudo ${BUTLER_HOME}/butler push target/${PROJECT_NAME}-${GAME_VERSION}.jar zalinius/${ITCHIO_NAME}:win-linux-mac -i /home/zalinius/.config/itch/butler_creds --userversion $GAME_VERSION --fix-permissions --if-changed'
             }
         }
     }
