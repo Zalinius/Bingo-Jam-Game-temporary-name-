@@ -1,14 +1,4 @@
-
-void setBuildStatus(String message, String state) {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: env.GIT_URL],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-  ]);
-}
-
+@Library('zalinius-shared-library') _
 
 pipeline {
     agent any
@@ -19,23 +9,11 @@ pipeline {
         SONAR_CREDS=credentials('sonar')
         BUTLER_API_KEY=credentials('butler')
     }
-
     stages {
-        // Note that the agent automatically checks out the source code from Github
-        stage('Build') {
-            steps {
-                sh 'mvn --batch-mode clean test'
-            }
-        }
-        stage('Package Jar') {
-            steps {
-                sh 'mvn --batch-mode clean package'
-            }
-        }
+   	    // Note that the agent automatically checks out the source code from Github	
+        stage('Build') { steps { buildAndTest()}}
         stage('Deploy') {
-            when {
-                branch 'main'
-            }
+            when { branch 'main'}
             environment {
                 GAME_VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true 
                 PROJECT_NAME = sh script: 'mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout', returnStdout: true 
@@ -46,29 +24,20 @@ pipeline {
                 JRE_WIN = '/var/jenkins_home/downloads/jre17.zip'
             }
             steps {
-                sh 'mvn sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONAR_CREDS' //Send test coverage to Sonarqube, and let it know there is a new version of main to cover
-
+                sonarScan(sonarcubeHost: "${SONARQUBE_HOST}", sonarcubeCredentials: credentials('sonar'))
                 //Make EXE
                 sh 'mkdir target/windows'
                 sh '${LAUNCH4J_HOME}/launch4j windows_exe_config.xml'
 
                 //Get JRE
-              unzip zipFile: "${JRE_WIN}", dir: 'target/windows/jre/'
+                unzip zipFile: "${JRE_WIN}", dir: 'target/windows/jre/'
                 
                 sh '${BUTLER_HOME} push target/windows/ zalinius/${ITCHIO_NAME}:windows --userversion $GAME_VERSION --fix-permissions --if-changed'				
                 sh '${BUTLER_HOME} push target/${PROJECT_NAME}-${GAME_VERSION}.jar zalinius/${ITCHIO_NAME}:win-linux-mac --userversion $GAME_VERSION --fix-permissions --if-changed'
-            }
-        }
-    }
+    }}}
     post {
-        always {
-            junit '**/target/*-reports/TEST-*.xml'
-        }
-        success {
-            setBuildStatus('Build succeeded', 'SUCCESS');
-        }
-        failure {
-            setBuildStatus('Build failed', 'FAILURE');
-        }
+        always  { testReport() }    
+        success { githubSuccess() }    
+        failure { githubFailure() }    
     }
 }
