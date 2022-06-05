@@ -14,7 +14,7 @@
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <jre>
-    <path>jre/jdk-11.0.10+9-jre</path>
+    <path>jre/jdk-17.0.3+7-jre</path>
     <bundledJre64Bit>true</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
     <minVersion></minVersion>
