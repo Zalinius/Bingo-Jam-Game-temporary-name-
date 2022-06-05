@@ -6,7 +6,7 @@ pipeline {
         maven 'maven3'
     }
     stages {
-   	    // Note that the agent automatically checks out the source code from Github	
+        // Note that the agent automatically checks out the source code from Github	
         stage('Build') { steps { buildAndTest()}}
         stage('Deploy') {
             when { branch 'main'}
