@@ -26,7 +26,7 @@ pipeline {
             steps {
     
 //                sonarScan(sonarcubeHost: "${SONARQUBE_HOST}", sonarcubeCredentials: credentials 'sonar')
-                sonarScan(sonarcubeHost: "a", sonarcubeCredentials: 'b')
+                sonarScan(sonarcubeHost: "$SONARQUBE_HOST", sonarcubeCredentials: 'b')
 
                 //Make EXE
                 sh 'mkdir target/windows'
