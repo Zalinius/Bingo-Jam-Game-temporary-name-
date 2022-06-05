@@ -22,11 +22,13 @@ pipeline {
                 LAUNCH4J_HOME = tool name: 'launch4j', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
                 BUTLER_HOME = tool name: 'butler', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
                 JRE_WIN = '/var/jenkins_home/downloads/jre17.zip'
+                
+                SONAR_CREDS = credentials('sonar')
             }
             steps {
     
 //                sonarScan(sonarcubeHost: "${SONARQUBE_HOST}", sonarcubeCredentials: credentials 'sonar')
-                sonarScan(sonarcubeHost: "$SONARQUBE_HOST", sonarcubeCredentials: credentials('sonar') )
+                sonarScan(sonarcubeHost: "$SONARQUBE_HOST", sonarcubeCredentials: "$SONAR_CREDS" )
 
                 //Make EXE
                 sh 'mkdir target/windows'
