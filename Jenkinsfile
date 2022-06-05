@@ -29,6 +29,8 @@ pipeline {
     
                 sonarScan()
 
+                sh 'mvn --batch-mode clean package'
+
                 //Make EXE
                 sh 'mkdir target/windows'
                 sh '${LAUNCH4J_HOME}/launch4j windows_exe_config.xml'
