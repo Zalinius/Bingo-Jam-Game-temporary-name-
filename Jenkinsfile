@@ -25,7 +25,6 @@ pipeline {
             }
             steps {
                 echo "$SONARQUBE_HOST"
-                sonarScan(sonarcubeHost: '$SONARQUBE_HOST', sonarcubeCredentials: credentials('sonar'))
                 sonarScan(sonarcubeHost: '''$SONARQUBE_HOST''', sonarcubeCredentials: credentials('sonar'))
                 sonarScan(sonarcubeHost: "$SONARQUBE_HOST", sonarcubeCredentials: credentials('sonar'))
                 sonarScan(sonarcubeHost: """$SONARQUBE_HOST""", sonarcubeCredentials: credentials('sonar'))
