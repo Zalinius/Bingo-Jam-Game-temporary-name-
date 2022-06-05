@@ -13,7 +13,9 @@ pipeline {
             environment {
                 SONAR_CREDS = credentials('sonar')
 
+                JRE_WIN = '/var/jenkins_home/downloads/jre17.zip'               
                 LAUNCH4J_HOME = tool name: 'launch4j', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+
                 BUTLER_HOME = tool name: 'butler', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
                 BUTLER_API_KEY=credentials('butler')
                 ITCHIO_NAME = 'bingo-jam-game-temporary-name'
