@@ -5,10 +5,6 @@ pipeline {
     tools {
         maven 'maven3'
     }
-    environment{
-        SONAR_CREDS=credentials('sonar')
-        BUTLER_API_KEY=credentials('butler')
-    }
     stages {
    	    // Note that the agent automatically checks out the source code from Github	
         stage('Build') { steps { buildAndTest()}}
@@ -24,6 +20,7 @@ pipeline {
                 JRE_WIN = '/var/jenkins_home/downloads/jre17.zip'
                 
                 SONAR_CREDS = credentials('sonar')
+                BUTLER_API_KEY=credentials('butler')
             }
             steps {
     
