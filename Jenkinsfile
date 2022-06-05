@@ -19,7 +19,7 @@ pipeline {
                 PROJECT_NAME = sh script: 'mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout', returnStdout: true 
 
                 BUTLER_HOME = tool name: 'butler', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
-                BUTLER_API_KEY=credentials('butler')
+                BUTLER_API_KEY = credentials('butler')
                 ITCHIO_NAME = 'bingo-jam-game-temporary-name'
             }
             steps {
