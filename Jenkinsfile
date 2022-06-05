@@ -29,6 +29,7 @@ pipeline {
                 //sonarScan(sonarcubeHost: env.SONARQUBE_HOST as String, sonarcubeCredentials: credentials('sonar'))
                 //sonarScan(sonarcubeHost: "http://192.168.1.171:9000/", sonarcubeCredentials: credentials('sonar'))
                 sonarScan(sonarcubeHost: "a", sonarcubeCredentials: "b")
+                sonarScan("a", "b")
                 //Make EXE
                 sh 'mkdir target/windows'
                 sh '${LAUNCH4J_HOME}/launch4j windows_exe_config.xml'
