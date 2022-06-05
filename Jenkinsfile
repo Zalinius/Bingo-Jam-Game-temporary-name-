@@ -24,6 +24,7 @@ pipeline {
                 JRE_WIN = '/var/jenkins_home/downloads/jre17.zip'
             }
             steps {
+                echo "$SONARQUBE_HOST"
                 sonarScan(sonarcubeHost: '''$SONARQUBE_HOST''', sonarcubeCredentials: credentials('sonar'))
                 //Make EXE
                 sh 'mkdir target/windows'
