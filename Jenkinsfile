@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
     
-                sonarScan(sonarcubeHost: "$SONARQUBE_HOST", sonarcubeCredentials: credentials('sonar'))
+                sonarScan(sonarcubeHost: "${SONARQUBE_HOST}", sonarcubeCredentials: credentials('sonar'))
                 //sonarScan(sonarcubeHost: "http://192.168.1.171:9000/", sonarcubeCredentials: credentials('sonar'))
                 //sonarScan(sonarcubeHost: "a", sonarcubeCredentials: "b")
                 //sonarScan("a", "b")
