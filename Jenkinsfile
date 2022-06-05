@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 echo "$SONARQUBE_HOST"
-                sonarScan(sonarcubeHost: """$SONARQUBE_HOST""", sonarcubeCredentials: credentials('sonar'))
+                "sonarScan(sonarcubeHost: $SONARQUBE_HOST, sonarcubeCredentials: credentials('sonar'))"
                 //Make EXE
                 sh 'mkdir target/windows'
                 sh '${LAUNCH4J_HOME}/launch4j windows_exe_config.xml'
