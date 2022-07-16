@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.resources.FontSingleton;
 import com.zalinius.bingojam.worlds.World;
 import com.zalinius.bingojam.worlds.WorldFactory;
@@ -13,6 +12,9 @@ import com.zalinius.zje.architecture.input.actions.Axisable;
 import com.zalinius.zje.architecture.input.actions.Inputtable;
 import com.zalinius.zje.architecture.input.types.BinaryInput;
 import com.zalinius.zje.plugins.AbstractPlugin;
+import com.zalinius.zje.plugins.RuntimePlugin;
+import com.zalinius.zje.plugins.configuration.ScaleWhenResized;
+import com.zalinius.zje.plugins.configuration.ScreenStrategy;
 
 public class BingoJamGame extends GameContainer{
 
@@ -36,8 +38,12 @@ public class BingoJamGame extends GameContainer{
 	public List<AbstractPlugin> getPlugins() {
 		List<AbstractPlugin> plugins = new ArrayList<>();
 		plugins.add(gameWorld.getBackground(this::exit, getRumbleListener()));
-		FollowCam cam = this.gameWorld.getFollowCamera();
+		
+		ScreenStrategy screenStrategy = new ScaleWhenResized();
+		RuntimePlugin cam = this.gameWorld.getCamera(screenStrategy);
+		plugins.add(screenStrategy);
 		plugins.add(cam);
+		
 		//plugins.add(new Axes(cam));
 		return plugins;
 	}

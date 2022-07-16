@@ -23,7 +23,6 @@ import com.zalinius.bingojam.pieces.RespawnPoint;
 import com.zalinius.bingojam.pieces.Slopable;
 import com.zalinius.bingojam.pieces.TextSpot;
 import com.zalinius.bingojam.pieces.Wall;
-import com.zalinius.bingojam.plugins.FollowCam;
 import com.zalinius.bingojam.puzzle.Barrel;
 import com.zalinius.bingojam.puzzle.BarrelPlate;
 import com.zalinius.bingojam.puzzle.Button;
@@ -38,6 +37,9 @@ import com.zalinius.zje.architecture.input.actions.Inputtable;
 import com.zalinius.zje.physics.Collisions;
 import com.zalinius.zje.physics.Point;
 import com.zalinius.zje.plugins.AbstractPlugin;
+import com.zalinius.zje.plugins.camera.AbstractCamera;
+import com.zalinius.zje.plugins.camera.GentleFollowCam;
+import com.zalinius.zje.plugins.configuration.ScreenStrategy;
 
 public class World implements GameObject, Topographical{
 
@@ -200,8 +202,8 @@ public class World implements GameObject, Topographical{
 		return rocky.axisInputs();
 	}
 
-	public FollowCam getFollowCamera() {
-		return new FollowCam(rocky);
+	public AbstractCamera getCamera(ScreenStrategy screenStrategy) {
+		return new GentleFollowCam(rocky, screenStrategy);
 	}
 
 	@Override	
